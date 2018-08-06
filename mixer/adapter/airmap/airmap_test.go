@@ -22,13 +22,14 @@ import (
 	"testing"
 
 	"istio.io/istio/mixer/pkg/adapter/test"
+	"istio.io/istio/mixer/template/apikey"
 	"istio.io/istio/mixer/template/authorization"
 )
 
 func TestBasic(t *testing.T) {
 	info := GetInfo()
 
-	if !contains(info.SupportedTemplates, authorization.TemplateName) {
+	if !contains(info.SupportedTemplates, apikey.TemplateName) || !contains(info.SupportedTemplates, authorization.TemplateName) {
 		t.Error("Didn't find all expected supported templates")
 	}
 

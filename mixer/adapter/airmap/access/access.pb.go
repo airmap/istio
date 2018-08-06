@@ -11,6 +11,8 @@
 		Status
 		Validity
 		API
+		VerifyAPIKeyParameters
+		VerifyAPIKeyResult
 		AuthorizeAccessParameters
 		AuthorizeAccessResult
 */
@@ -234,6 +236,78 @@ func (m *API_Key) GetAsString() string {
 	return ""
 }
 
+// VerifyAPIKeyParameters bundles up parameters for calls to Controller.VerifyAPIKey.
+type VerifyAPIKeyParameters struct {
+	Name      *API_Name                   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Version   *API_Version                `protobuf:"bytes,2,opt,name=version" json:"version,omitempty"`
+	Method    *API_Method                 `protobuf:"bytes,3,opt,name=method" json:"method,omitempty"`
+	Key       *API_Key                    `protobuf:"bytes,4,opt,name=key" json:"key,omitempty"`
+	Timestamp *google_protobuf1.Timestamp `protobuf:"bytes,5,opt,name=timestamp" json:"timestamp,omitempty"`
+}
+
+func (m *VerifyAPIKeyParameters) Reset()                    { *m = VerifyAPIKeyParameters{} }
+func (*VerifyAPIKeyParameters) ProtoMessage()               {}
+func (*VerifyAPIKeyParameters) Descriptor() ([]byte, []int) { return fileDescriptorAccess, []int{3} }
+
+func (m *VerifyAPIKeyParameters) GetName() *API_Name {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *VerifyAPIKeyParameters) GetVersion() *API_Version {
+	if m != nil {
+		return m.Version
+	}
+	return nil
+}
+
+func (m *VerifyAPIKeyParameters) GetMethod() *API_Method {
+	if m != nil {
+		return m.Method
+	}
+	return nil
+}
+
+func (m *VerifyAPIKeyParameters) GetKey() *API_Key {
+	if m != nil {
+		return m.Key
+	}
+	return nil
+}
+
+func (m *VerifyAPIKeyParameters) GetTimestamp() *google_protobuf1.Timestamp {
+	if m != nil {
+		return m.Timestamp
+	}
+	return nil
+}
+
+// VerifyAPIKeyResult bundles up the result of calls to Controller.VerifyAPIKey.
+type VerifyAPIKeyResult struct {
+	Status   *Status   `protobuf:"bytes,1,opt,name=status" json:"status,omitempty"`
+	Validity *Validity `protobuf:"bytes,2,opt,name=validity" json:"validity,omitempty"`
+}
+
+func (m *VerifyAPIKeyResult) Reset()                    { *m = VerifyAPIKeyResult{} }
+func (*VerifyAPIKeyResult) ProtoMessage()               {}
+func (*VerifyAPIKeyResult) Descriptor() ([]byte, []int) { return fileDescriptorAccess, []int{4} }
+
+func (m *VerifyAPIKeyResult) GetStatus() *Status {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *VerifyAPIKeyResult) GetValidity() *Validity {
+	if m != nil {
+		return m.Validity
+	}
+	return nil
+}
+
 // AuthorizeAccessParameters bundles up parameters for calls to Controller.AuthorizeAccess.
 type AuthorizeAccessParameters struct {
 	Subject   *AuthorizeAccessParameters_Subject `protobuf:"bytes,1,opt,name=subject" json:"subject,omitempty"`
@@ -243,7 +317,7 @@ type AuthorizeAccessParameters struct {
 
 func (m *AuthorizeAccessParameters) Reset()                    { *m = AuthorizeAccessParameters{} }
 func (*AuthorizeAccessParameters) ProtoMessage()               {}
-func (*AuthorizeAccessParameters) Descriptor() ([]byte, []int) { return fileDescriptorAccess, []int{3} }
+func (*AuthorizeAccessParameters) Descriptor() ([]byte, []int) { return fileDescriptorAccess, []int{5} }
 
 func (m *AuthorizeAccessParameters) GetSubject() *AuthorizeAccessParameters_Subject {
 	if m != nil {
@@ -276,7 +350,7 @@ type AuthorizeAccessParameters_Subject struct {
 func (m *AuthorizeAccessParameters_Subject) Reset()      { *m = AuthorizeAccessParameters_Subject{} }
 func (*AuthorizeAccessParameters_Subject) ProtoMessage() {}
 func (*AuthorizeAccessParameters_Subject) Descriptor() ([]byte, []int) {
-	return fileDescriptorAccess, []int{3, 0}
+	return fileDescriptorAccess, []int{5, 0}
 }
 
 func (m *AuthorizeAccessParameters_Subject) GetUser() string {
@@ -312,7 +386,7 @@ type AuthorizeAccessParameters_Action struct {
 func (m *AuthorizeAccessParameters_Action) Reset()      { *m = AuthorizeAccessParameters_Action{} }
 func (*AuthorizeAccessParameters_Action) ProtoMessage() {}
 func (*AuthorizeAccessParameters_Action) Descriptor() ([]byte, []int) {
-	return fileDescriptorAccess, []int{3, 1}
+	return fileDescriptorAccess, []int{5, 1}
 }
 
 func (m *AuthorizeAccessParameters_Action) GetNamespace() *API_Namespace {
@@ -358,7 +432,7 @@ type AuthorizeAccessResult struct {
 
 func (m *AuthorizeAccessResult) Reset()                    { *m = AuthorizeAccessResult{} }
 func (*AuthorizeAccessResult) ProtoMessage()               {}
-func (*AuthorizeAccessResult) Descriptor() ([]byte, []int) { return fileDescriptorAccess, []int{4} }
+func (*AuthorizeAccessResult) Descriptor() ([]byte, []int) { return fileDescriptorAccess, []int{6} }
 
 func (m *AuthorizeAccessResult) GetStatus() *Status {
 	if m != nil {
@@ -384,6 +458,8 @@ func init() {
 	proto.RegisterType((*API_Resource)(nil), "access.API.Resource")
 	proto.RegisterType((*API_Method)(nil), "access.API.Method")
 	proto.RegisterType((*API_Key)(nil), "access.API.Key")
+	proto.RegisterType((*VerifyAPIKeyParameters)(nil), "access.VerifyAPIKeyParameters")
+	proto.RegisterType((*VerifyAPIKeyResult)(nil), "access.VerifyAPIKeyResult")
 	proto.RegisterType((*AuthorizeAccessParameters)(nil), "access.AuthorizeAccessParameters")
 	proto.RegisterType((*AuthorizeAccessParameters_Subject)(nil), "access.AuthorizeAccessParameters.Subject")
 	proto.RegisterType((*AuthorizeAccessParameters_Action)(nil), "access.AuthorizeAccessParameters.Action")
@@ -670,6 +746,81 @@ func (this *API_Key) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *VerifyAPIKeyParameters) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*VerifyAPIKeyParameters)
+	if !ok {
+		that2, ok := that.(VerifyAPIKeyParameters)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if !this.Name.Equal(that1.Name) {
+		return false
+	}
+	if !this.Version.Equal(that1.Version) {
+		return false
+	}
+	if !this.Method.Equal(that1.Method) {
+		return false
+	}
+	if !this.Key.Equal(that1.Key) {
+		return false
+	}
+	if !this.Timestamp.Equal(that1.Timestamp) {
+		return false
+	}
+	return true
+}
+func (this *VerifyAPIKeyResult) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*VerifyAPIKeyResult)
+	if !ok {
+		that2, ok := that.(VerifyAPIKeyResult)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if !this.Status.Equal(that1.Status) {
+		return false
+	}
+	if !this.Validity.Equal(that1.Validity) {
+		return false
+	}
+	return true
+}
 func (this *AuthorizeAccessParameters) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
@@ -910,6 +1061,45 @@ func (this *API_Key) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *VerifyAPIKeyParameters) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&access.VerifyAPIKeyParameters{")
+	if this.Name != nil {
+		s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
+	}
+	if this.Version != nil {
+		s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
+	}
+	if this.Method != nil {
+		s = append(s, "Method: "+fmt.Sprintf("%#v", this.Method)+",\n")
+	}
+	if this.Key != nil {
+		s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
+	}
+	if this.Timestamp != nil {
+		s = append(s, "Timestamp: "+fmt.Sprintf("%#v", this.Timestamp)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *VerifyAPIKeyResult) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&access.VerifyAPIKeyResult{")
+	if this.Status != nil {
+		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
+	}
+	if this.Validity != nil {
+		s = append(s, "Validity: "+fmt.Sprintf("%#v", this.Validity)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *AuthorizeAccessParameters) GoString() string {
 	if this == nil {
 		return "nil"
@@ -1001,6 +1191,8 @@ const _ = grpc.SupportPackageIsVersion4
 // Client API for Controller service
 
 type ControllerClient interface {
+	// VerifyAPIKey verifies an API key.
+	VerifyAPIKey(ctx context.Context, in *VerifyAPIKeyParameters, opts ...grpc.CallOption) (*VerifyAPIKeyResult, error)
 	// AuthorizeAccess authorizes API accesses.
 	AuthorizeAccess(ctx context.Context, in *AuthorizeAccessParameters, opts ...grpc.CallOption) (*AuthorizeAccessResult, error)
 }
@@ -1011,6 +1203,15 @@ type controllerClient struct {
 
 func NewControllerClient(cc *grpc.ClientConn) ControllerClient {
 	return &controllerClient{cc}
+}
+
+func (c *controllerClient) VerifyAPIKey(ctx context.Context, in *VerifyAPIKeyParameters, opts ...grpc.CallOption) (*VerifyAPIKeyResult, error) {
+	out := new(VerifyAPIKeyResult)
+	err := grpc.Invoke(ctx, "/access.Controller/VerifyAPIKey", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *controllerClient) AuthorizeAccess(ctx context.Context, in *AuthorizeAccessParameters, opts ...grpc.CallOption) (*AuthorizeAccessResult, error) {
@@ -1025,12 +1226,32 @@ func (c *controllerClient) AuthorizeAccess(ctx context.Context, in *AuthorizeAcc
 // Server API for Controller service
 
 type ControllerServer interface {
+	// VerifyAPIKey verifies an API key.
+	VerifyAPIKey(context.Context, *VerifyAPIKeyParameters) (*VerifyAPIKeyResult, error)
 	// AuthorizeAccess authorizes API accesses.
 	AuthorizeAccess(context.Context, *AuthorizeAccessParameters) (*AuthorizeAccessResult, error)
 }
 
 func RegisterControllerServer(s *grpc.Server, srv ControllerServer) {
 	s.RegisterService(&_Controller_serviceDesc, srv)
+}
+
+func _Controller_VerifyAPIKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyAPIKeyParameters)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControllerServer).VerifyAPIKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/access.Controller/VerifyAPIKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControllerServer).VerifyAPIKey(ctx, req.(*VerifyAPIKeyParameters))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Controller_AuthorizeAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1055,6 +1276,10 @@ var _Controller_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "access.Controller",
 	HandlerType: (*ControllerServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "VerifyAPIKey",
+			Handler:    _Controller_VerifyAPIKey_Handler,
+		},
 		{
 			MethodName: "AuthorizeAccess",
 			Handler:    _Controller_AuthorizeAccess_Handler,
@@ -1288,6 +1513,112 @@ func (m *API_Key) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *VerifyAPIKeyParameters) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *VerifyAPIKeyParameters) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintAccess(dAtA, i, uint64(m.Name.Size()))
+		n2, err := m.Name.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	if m.Version != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintAccess(dAtA, i, uint64(m.Version.Size()))
+		n3, err := m.Version.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n3
+	}
+	if m.Method != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintAccess(dAtA, i, uint64(m.Method.Size()))
+		n4, err := m.Method.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
+	if m.Key != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintAccess(dAtA, i, uint64(m.Key.Size()))
+		n5, err := m.Key.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n5
+	}
+	if m.Timestamp != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintAccess(dAtA, i, uint64(m.Timestamp.Size()))
+		n6, err := m.Timestamp.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n6
+	}
+	return i, nil
+}
+
+func (m *VerifyAPIKeyResult) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *VerifyAPIKeyResult) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Status != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintAccess(dAtA, i, uint64(m.Status.Size()))
+		n7, err := m.Status.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n7
+	}
+	if m.Validity != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintAccess(dAtA, i, uint64(m.Validity.Size()))
+		n8, err := m.Validity.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n8
+	}
+	return i, nil
+}
+
 func (m *AuthorizeAccessParameters) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1307,31 +1638,31 @@ func (m *AuthorizeAccessParameters) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Subject.Size()))
-		n2, err := m.Subject.MarshalTo(dAtA[i:])
+		n9, err := m.Subject.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n2
+		i += n9
 	}
 	if m.Action != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Action.Size()))
-		n3, err := m.Action.MarshalTo(dAtA[i:])
+		n10, err := m.Action.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n3
+		i += n10
 	}
 	if m.Timestamp != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Timestamp.Size()))
-		n4, err := m.Timestamp.MarshalTo(dAtA[i:])
+		n11, err := m.Timestamp.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n4
+		i += n11
 	}
 	return i, nil
 }
@@ -1367,11 +1698,11 @@ func (m *AuthorizeAccessParameters_Subject) MarshalTo(dAtA []byte) (int, error) 
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Key.Size()))
-		n5, err := m.Key.MarshalTo(dAtA[i:])
+		n12, err := m.Key.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n5
+		i += n12
 	}
 	return i, nil
 }
@@ -1395,51 +1726,51 @@ func (m *AuthorizeAccessParameters_Action) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Namespace.Size()))
-		n6, err := m.Namespace.MarshalTo(dAtA[i:])
+		n13, err := m.Namespace.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n13
 	}
 	if m.Name != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Name.Size()))
-		n7, err := m.Name.MarshalTo(dAtA[i:])
+		n14, err := m.Name.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n14
 	}
 	if m.Version != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Version.Size()))
-		n8, err := m.Version.MarshalTo(dAtA[i:])
+		n15, err := m.Version.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n8
+		i += n15
 	}
 	if m.Method != nil {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Method.Size()))
-		n9, err := m.Method.MarshalTo(dAtA[i:])
+		n16, err := m.Method.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n9
+		i += n16
 	}
 	if m.Resource != nil {
 		dAtA[i] = 0x2a
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Resource.Size()))
-		n10, err := m.Resource.MarshalTo(dAtA[i:])
+		n17, err := m.Resource.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n17
 	}
 	return i, nil
 }
@@ -1463,21 +1794,21 @@ func (m *AuthorizeAccessResult) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Status.Size()))
-		n11, err := m.Status.MarshalTo(dAtA[i:])
+		n18, err := m.Status.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n11
+		i += n18
 	}
 	if m.Validity != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintAccess(dAtA, i, uint64(m.Validity.Size()))
-		n12, err := m.Validity.MarshalTo(dAtA[i:])
+		n19, err := m.Validity.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n12
+		i += n19
 	}
 	return i, nil
 }
@@ -1578,6 +1909,46 @@ func (m *API_Key) Size() (n int) {
 	_ = l
 	l = len(m.AsString)
 	if l > 0 {
+		n += 1 + l + sovAccess(uint64(l))
+	}
+	return n
+}
+
+func (m *VerifyAPIKeyParameters) Size() (n int) {
+	var l int
+	_ = l
+	if m.Name != nil {
+		l = m.Name.Size()
+		n += 1 + l + sovAccess(uint64(l))
+	}
+	if m.Version != nil {
+		l = m.Version.Size()
+		n += 1 + l + sovAccess(uint64(l))
+	}
+	if m.Method != nil {
+		l = m.Method.Size()
+		n += 1 + l + sovAccess(uint64(l))
+	}
+	if m.Key != nil {
+		l = m.Key.Size()
+		n += 1 + l + sovAccess(uint64(l))
+	}
+	if m.Timestamp != nil {
+		l = m.Timestamp.Size()
+		n += 1 + l + sovAccess(uint64(l))
+	}
+	return n
+}
+
+func (m *VerifyAPIKeyResult) Size() (n int) {
+	var l int
+	_ = l
+	if m.Status != nil {
+		l = m.Status.Size()
+		n += 1 + l + sovAccess(uint64(l))
+	}
+	if m.Validity != nil {
+		l = m.Validity.Size()
 		n += 1 + l + sovAccess(uint64(l))
 	}
 	return n
@@ -1759,6 +2130,31 @@ func (this *API_Key) String() string {
 	}
 	s := strings.Join([]string{`&API_Key{`,
 		`AsString:` + fmt.Sprintf("%v", this.AsString) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *VerifyAPIKeyParameters) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&VerifyAPIKeyParameters{`,
+		`Name:` + strings.Replace(fmt.Sprintf("%v", this.Name), "API_Name", "API_Name", 1) + `,`,
+		`Version:` + strings.Replace(fmt.Sprintf("%v", this.Version), "API_Version", "API_Version", 1) + `,`,
+		`Method:` + strings.Replace(fmt.Sprintf("%v", this.Method), "API_Method", "API_Method", 1) + `,`,
+		`Key:` + strings.Replace(fmt.Sprintf("%v", this.Key), "API_Key", "API_Key", 1) + `,`,
+		`Timestamp:` + strings.Replace(fmt.Sprintf("%v", this.Timestamp), "Timestamp", "google_protobuf1.Timestamp", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *VerifyAPIKeyResult) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&VerifyAPIKeyResult{`,
+		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "Status", "Status", 1) + `,`,
+		`Validity:` + strings.Replace(fmt.Sprintf("%v", this.Validity), "Validity", "Validity", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2544,6 +2940,337 @@ func (m *API_Key) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *VerifyAPIKeyParameters) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAccess
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: VerifyAPIKeyParameters: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: VerifyAPIKeyParameters: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAccess
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAccess
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Name == nil {
+				m.Name = &API_Name{}
+			}
+			if err := m.Name.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAccess
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAccess
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Version == nil {
+				m.Version = &API_Version{}
+			}
+			if err := m.Version.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Method", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAccess
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAccess
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Method == nil {
+				m.Method = &API_Method{}
+			}
+			if err := m.Method.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAccess
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAccess
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Key == nil {
+				m.Key = &API_Key{}
+			}
+			if err := m.Key.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAccess
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAccess
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Timestamp == nil {
+				m.Timestamp = &google_protobuf1.Timestamp{}
+			}
+			if err := m.Timestamp.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAccess(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAccess
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *VerifyAPIKeyResult) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAccess
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: VerifyAPIKeyResult: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: VerifyAPIKeyResult: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAccess
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAccess
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Status == nil {
+				m.Status = &Status{}
+			}
+			if err := m.Status.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Validity", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAccess
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAccess
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Validity == nil {
+				m.Validity = &Validity{}
+			}
+			if err := m.Validity.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAccess(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAccess
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *AuthorizeAccessParameters) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3273,48 +4000,53 @@ var (
 func init() { proto.RegisterFile("mixer/adapter/airmap/access/access.proto", fileDescriptorAccess) }
 
 var fileDescriptorAccess = []byte{
-	// 682 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x94, 0x4f, 0x6f, 0xd3, 0x3e,
-	0x18, 0xc7, 0x9b, 0x35, 0x4b, 0xdb, 0xe7, 0xf7, 0x63, 0xeb, 0xcc, 0x86, 0xba, 0x20, 0xc2, 0x56,
-	0x60, 0x94, 0x69, 0xa4, 0x68, 0x13, 0x12, 0x47, 0xca, 0x06, 0xd2, 0x34, 0x01, 0xc3, 0x85, 0xc1,
-	0x0d, 0xb9, 0x89, 0xe9, 0x02, 0x4d, 0x5c, 0xd9, 0xce, 0xb4, 0x72, 0xe2, 0x25, 0xf0, 0x32, 0xe0,
-	0x9d, 0x70, 0xdc, 0x91, 0x23, 0x0b, 0x17, 0x8e, 0x7d, 0x09, 0x28, 0x8e, 0xd3, 0x55, 0x45, 0x6b,
-	0x4f, 0xce, 0x63, 0x7f, 0x9e, 0x3f, 0x7e, 0x9e, 0xaf, 0x03, 0x8d, 0x30, 0x38, 0xa5, 0xbc, 0x49,
-	0x7c, 0xd2, 0x97, 0xe9, 0x1a, 0xf0, 0x90, 0xf4, 0x9b, 0xc4, 0xf3, 0xa8, 0x10, 0x7a, 0x71, 0xfb,
-	0x9c, 0x49, 0x86, 0xac, 0xcc, 0xb2, 0x9d, 0x2e, 0x63, 0xdd, 0x1e, 0x6d, 0xaa, 0xdd, 0x4e, 0xfc,
-	0xa1, 0xe9, 0xc7, 0x9c, 0xc8, 0x80, 0x45, 0x19, 0x67, 0xdf, 0x9c, 0x3c, 0x97, 0x41, 0x48, 0x85,
-	0x24, 0x61, 0x3f, 0x03, 0xea, 0x7b, 0x60, 0xb5, 0x25, 0x91, 0xb1, 0x40, 0x6b, 0x60, 0x7a, 0xcc,
-	0xa7, 0x35, 0x63, 0xcd, 0x68, 0x2c, 0x6c, 0xff, 0xef, 0xea, 0x7c, 0xbb, 0xcc, 0xa7, 0x58, 0x9d,
-	0xa0, 0x1a, 0x94, 0x42, 0x2a, 0x04, 0xe9, 0xd2, 0xda, 0xdc, 0x9a, 0xd1, 0xa8, 0xe0, 0xdc, 0xac,
-	0xbf, 0x85, 0xf2, 0x11, 0xe9, 0x05, 0x7e, 0x20, 0x07, 0xe8, 0x21, 0x94, 0xf3, 0x22, 0x54, 0xac,
-	0xff, 0xb6, 0x57, 0xdd, 0xac, 0x0a, 0x37, 0xaf, 0xc2, 0xdd, 0xd3, 0x00, 0x1e, 0xa1, 0x68, 0x19,
-	0xe6, 0x3d, 0x16, 0x47, 0x52, 0x85, 0x36, 0x71, 0x66, 0xd4, 0x87, 0x06, 0x14, 0x5b, 0x87, 0xfb,
-	0x76, 0x03, 0x2a, 0x2f, 0x48, 0x48, 0x45, 0x9f, 0x78, 0x14, 0x5d, 0x87, 0x0a, 0x11, 0xef, 0x85,
-	0xe4, 0x41, 0xd4, 0x55, 0x29, 0x2a, 0xb8, 0x4c, 0x44, 0x5b, 0xd9, 0xf6, 0x2d, 0x30, 0x53, 0x72,
-	0x3a, 0xb4, 0x01, 0xa5, 0x23, 0xca, 0x45, 0x9a, 0x77, 0x2a, 0x77, 0x17, 0xca, 0x98, 0x0a, 0x16,
-	0xf3, 0x59, 0x59, 0xef, 0x80, 0xf5, 0x9c, 0xca, 0x63, 0xe6, 0x4f, 0xc7, 0xea, 0x50, 0x3c, 0xa0,
-	0x83, 0xa9, 0x4c, 0xfd, 0xbb, 0x09, 0xab, 0xad, 0x58, 0x1e, 0x33, 0x1e, 0x7c, 0xa6, 0x2d, 0x35,
-	0x84, 0x43, 0xc2, 0x49, 0x48, 0x25, 0xe5, 0x02, 0xed, 0x42, 0x49, 0xc4, 0x9d, 0x8f, 0xd4, 0x93,
-	0xba, 0xb9, 0xf7, 0xf2, 0x41, 0x5d, 0xea, 0xe3, 0xb6, 0x33, 0x07, 0x9c, 0x7b, 0xa2, 0xc7, 0x60,
-	0x11, 0x4f, 0x0d, 0x68, 0x4e, 0xc5, 0x68, 0xcc, 0x8e, 0xd1, 0x52, 0x3c, 0xd6, 0x7e, 0xe8, 0x11,
-	0x54, 0x46, 0x4a, 0xaa, 0x15, 0x55, 0x10, 0xfb, 0x9f, 0x29, 0xbf, 0xce, 0x09, 0x7c, 0x01, 0xdb,
-	0xef, 0xa0, 0xa4, 0xeb, 0x41, 0x08, 0xcc, 0x58, 0x50, 0xae, 0x3b, 0xa0, 0xbe, 0xd1, 0x35, 0xb0,
-	0xba, 0x9c, 0xc5, 0x7d, 0xa1, 0x25, 0xa6, 0x2d, 0xb4, 0x0e, 0xc5, 0x4f, 0x74, 0xa0, 0x53, 0x2d,
-	0x8e, 0xea, 0x3d, 0xdc, 0x77, 0x0f, 0xe8, 0x00, 0xa7, 0x67, 0xf6, 0xd0, 0x00, 0x2b, 0x2b, 0x13,
-	0xed, 0x40, 0x25, 0xca, 0xe5, 0xa2, 0xfb, 0xb4, 0x32, 0xee, 0x33, 0xd2, 0x12, 0xbe, 0xe0, 0xd0,
-	0x6d, 0x30, 0x53, 0x43, 0xf7, 0xa4, 0x3a, 0xc9, 0x63, 0x75, 0x8a, 0xee, 0x43, 0xe9, 0x24, 0x93,
-	0x8e, 0x2e, 0xe6, 0xea, 0x38, 0xa8, 0x55, 0x85, 0x73, 0x06, 0x6d, 0x82, 0x15, 0x2a, 0x61, 0xd4,
-	0x4c, 0x45, 0xa3, 0x71, 0x3a, 0x93, 0x0c, 0xd6, 0x04, 0x7a, 0x00, 0x65, 0xae, 0xd5, 0x56, 0x9b,
-	0x57, 0xf4, 0xf2, 0x38, 0x9d, 0x2b, 0x11, 0x8f, 0xa8, 0x7a, 0x08, 0x2b, 0x13, 0x23, 0xc3, 0x54,
-	0xc4, 0x3d, 0x89, 0x36, 0xc0, 0x12, 0xea, 0x59, 0xeb, 0xdb, 0x2f, 0xe4, 0x81, 0xb2, 0xc7, 0x8e,
-	0xf5, 0x29, 0xda, 0x82, 0xf2, 0x89, 0x7e, 0xb8, 0x93, 0xf7, 0xce, 0x1f, 0x34, 0x1e, 0x11, 0x9b,
-	0x18, 0xcc, 0xf4, 0x77, 0x80, 0x00, 0xac, 0x74, 0x7d, 0x79, 0x50, 0x2d, 0xa0, 0x25, 0xb8, 0x92,
-	0x7e, 0x3f, 0x63, 0xbc, 0x13, 0xf8, 0x3e, 0x8d, 0xaa, 0x06, 0x5a, 0x86, 0x6a, 0xba, 0xf5, 0x26,
-	0x22, 0x79, 0x6d, 0x7e, 0x75, 0x0e, 0xad, 0xc0, 0x52, 0xba, 0xfb, 0x2a, 0x66, 0x92, 0x3c, 0x3d,
-	0xf5, 0x28, 0xf5, 0xa9, 0x5f, 0x2d, 0x6e, 0x13, 0x80, 0x5d, 0x16, 0x49, 0xce, 0x7a, 0x3d, 0xca,
-	0x51, 0x1b, 0x16, 0x27, 0x2e, 0x84, 0xd6, 0x67, 0x8a, 0xd3, 0xbe, 0x71, 0x09, 0x92, 0x35, 0xe3,
-	0xc9, 0xd6, 0xd9, 0xb9, 0x53, 0xf8, 0x79, 0xee, 0x14, 0x86, 0xe7, 0x8e, 0xf1, 0x25, 0x71, 0x8c,
-	0x6f, 0x89, 0x63, 0xfc, 0x48, 0x1c, 0xe3, 0x2c, 0x71, 0x8c, 0x5f, 0x89, 0x63, 0xfc, 0x49, 0x9c,
-	0xc2, 0x30, 0x71, 0x8c, 0xaf, 0xbf, 0x9d, 0x42, 0xc7, 0x52, 0xfa, 0xdd, 0xf9, 0x1b, 0x00, 0x00,
-	0xff, 0xff, 0x12, 0x2d, 0x85, 0x47, 0x8d, 0x05, 0x00, 0x00,
+	// 760 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0x4f, 0x53, 0xfb, 0x44,
+	0x18, 0xc7, 0x1b, 0x92, 0x5f, 0xda, 0x3e, 0xbf, 0x9f, 0x50, 0x56, 0x60, 0x4a, 0x1c, 0x23, 0x44,
+	0xc5, 0xca, 0x60, 0xeb, 0x94, 0x71, 0xc6, 0xa3, 0x15, 0x74, 0x06, 0x3b, 0x6a, 0xdd, 0x2a, 0x7a,
+	0x73, 0xb6, 0xc9, 0x52, 0x82, 0x4d, 0xb6, 0xb3, 0xbb, 0x61, 0xa8, 0x27, 0x5f, 0x82, 0x2f, 0x43,
+	0x0f, 0xbe, 0x0f, 0x8f, 0x1c, 0x3d, 0x4a, 0xbd, 0x78, 0xec, 0xc9, 0xb3, 0x93, 0xcd, 0x26, 0xd4,
+	0x0a, 0xad, 0x1c, 0x3c, 0x6d, 0x76, 0x9f, 0xcf, 0xee, 0xf3, 0xef, 0xfb, 0x04, 0x1a, 0x51, 0x78,
+	0x43, 0x79, 0x8b, 0x04, 0x64, 0x2c, 0xd3, 0x35, 0xe4, 0x11, 0x19, 0xb7, 0x88, 0xef, 0x53, 0x21,
+	0xf4, 0xd2, 0x1c, 0x73, 0x26, 0x19, 0xb2, 0xb3, 0x9d, 0xe3, 0x0e, 0x19, 0x1b, 0x8e, 0x68, 0x4b,
+	0x9d, 0x0e, 0x92, 0x8b, 0x56, 0x90, 0x70, 0x22, 0x43, 0x16, 0x67, 0x9c, 0xf3, 0xda, 0xa2, 0x5d,
+	0x86, 0x11, 0x15, 0x92, 0x44, 0xe3, 0x0c, 0xf0, 0x4e, 0xc1, 0xee, 0x4b, 0x22, 0x13, 0x81, 0xf6,
+	0xc0, 0xf2, 0x59, 0x40, 0xeb, 0xc6, 0x9e, 0xd1, 0x58, 0x6f, 0xbf, 0x68, 0x6a, 0x7f, 0x27, 0x2c,
+	0xa0, 0x58, 0x59, 0x50, 0x1d, 0xca, 0x11, 0x15, 0x82, 0x0c, 0x69, 0x7d, 0x6d, 0xcf, 0x68, 0x54,
+	0x71, 0xbe, 0xf5, 0xbe, 0x86, 0xca, 0x39, 0x19, 0x85, 0x41, 0x28, 0x27, 0xe8, 0x3d, 0xa8, 0xe4,
+	0x41, 0xa8, 0xb7, 0x9e, 0xb7, 0x77, 0x9b, 0x59, 0x14, 0xcd, 0x3c, 0x8a, 0xe6, 0xa9, 0x06, 0x70,
+	0x81, 0xa2, 0x2d, 0x78, 0xe6, 0xb3, 0x24, 0x96, 0xea, 0x69, 0x0b, 0x67, 0x1b, 0x6f, 0x66, 0x80,
+	0xd9, 0xe9, 0x9d, 0x39, 0x0d, 0xa8, 0x7e, 0x46, 0x22, 0x2a, 0xc6, 0xc4, 0xa7, 0xe8, 0x15, 0xa8,
+	0x12, 0xf1, 0xad, 0x90, 0x3c, 0x8c, 0x87, 0xca, 0x45, 0x15, 0x57, 0x88, 0xe8, 0xab, 0xbd, 0xf3,
+	0x3a, 0x58, 0x29, 0xb9, 0x1c, 0x3a, 0x80, 0xf2, 0x39, 0xe5, 0x22, 0xf5, 0xbb, 0x94, 0x7b, 0x0b,
+	0x2a, 0x98, 0x0a, 0x96, 0xf0, 0x55, 0x5e, 0xdf, 0x04, 0xfb, 0x53, 0x2a, 0x2f, 0x59, 0xb0, 0x1c,
+	0xf3, 0xc0, 0xec, 0xd2, 0xc9, 0x52, 0xc6, 0xfb, 0xcb, 0x80, 0x9d, 0x73, 0xca, 0xc3, 0x8b, 0x49,
+	0xa7, 0x77, 0xd6, 0xa5, 0x93, 0x1e, 0xe1, 0x24, 0xa2, 0x92, 0x72, 0x81, 0xde, 0x00, 0x2b, 0x26,
+	0x11, 0xd5, 0x65, 0xad, 0xe5, 0x2d, 0xea, 0xf4, 0xce, 0x9a, 0x69, 0xce, 0x58, 0x59, 0xd1, 0x3b,
+	0x50, 0xbe, 0xce, 0x92, 0x53, 0xb5, 0x7c, 0xde, 0x7e, 0x79, 0x1e, 0xd4, 0x79, 0xe3, 0x9c, 0x41,
+	0x87, 0x60, 0x47, 0x2a, 0xf4, 0xba, 0xa9, 0x68, 0x34, 0x4f, 0x67, 0x49, 0x61, 0x4d, 0xa0, 0x7d,
+	0x30, 0xbf, 0xa3, 0x93, 0xba, 0xa5, 0xc0, 0x8d, 0x79, 0xb0, 0x4b, 0x27, 0x38, 0xb5, 0xa1, 0xf7,
+	0xa1, 0x5a, 0x68, 0xac, 0xfe, 0x4c, 0x81, 0xce, 0xbf, 0xfa, 0xff, 0x65, 0x4e, 0xe0, 0x7b, 0xd8,
+	0xbb, 0x02, 0x34, 0x9f, 0x37, 0xa6, 0x22, 0x19, 0x49, 0x74, 0x00, 0xb6, 0x50, 0x02, 0xd5, 0x59,
+	0xaf, 0xe7, 0x5e, 0x33, 0xd9, 0x62, 0x6d, 0x45, 0x47, 0x50, 0xb9, 0xd6, 0x12, 0xd4, 0x69, 0x17,
+	0xf5, 0xc9, 0xa5, 0x89, 0x0b, 0xc2, 0xfb, 0xd9, 0x82, 0xdd, 0x4e, 0x22, 0x2f, 0x19, 0x0f, 0xbf,
+	0xa7, 0x1d, 0x85, 0xcd, 0xd5, 0xf9, 0x04, 0xca, 0x22, 0x19, 0x5c, 0x51, 0x5f, 0x6a, 0xa7, 0x6f,
+	0x17, 0xa9, 0x3e, 0x76, 0xa7, 0xd9, 0xcf, 0x2e, 0xe0, 0xfc, 0x26, 0xfa, 0x00, 0x6c, 0xe2, 0xcb,
+	0xfb, 0x2e, 0x34, 0x56, 0xbf, 0xd1, 0x51, 0x3c, 0xd6, 0xf7, 0xfe, 0x59, 0x4a, 0xf3, 0x09, 0xa5,
+	0x74, 0xbe, 0x81, 0xb2, 0x8e, 0x07, 0x21, 0xb0, 0x12, 0x41, 0xb9, 0x96, 0x99, 0xfa, 0x46, 0x3b,
+	0x60, 0x0f, 0x39, 0x4b, 0xc6, 0x42, 0xcf, 0xb1, 0xde, 0xe5, 0xed, 0x35, 0x1f, 0x6f, 0xaf, 0x33,
+	0x33, 0xc0, 0xce, 0xc2, 0x44, 0xc7, 0x50, 0x8d, 0xf3, 0x99, 0xd4, 0x75, 0xda, 0x5e, 0x94, 0xa4,
+	0x32, 0xe2, 0x7b, 0xae, 0x90, 0xf0, 0xda, 0x7f, 0x95, 0xb0, 0xf9, 0x24, 0x09, 0x5b, 0x2b, 0x25,
+	0xfc, 0x2e, 0x54, 0xb8, 0x1e, 0x69, 0x2d, 0xcf, 0xad, 0x79, 0x3a, 0x1f, 0x77, 0x5c, 0x50, 0x5e,
+	0x04, 0xdb, 0x0b, 0x2d, 0xfb, 0x3f, 0xa5, 0x79, 0x88, 0xc1, 0x4a, 0xff, 0xb9, 0x08, 0xc0, 0x4e,
+	0xd7, 0xcf, 0xbb, 0xb5, 0x12, 0xda, 0x84, 0x97, 0xd2, 0xef, 0x8f, 0x19, 0x1f, 0x84, 0x41, 0x40,
+	0xe3, 0x9a, 0x81, 0xb6, 0xa0, 0x96, 0x1e, 0x7d, 0x15, 0x93, 0x3c, 0xb6, 0xa0, 0xb6, 0x86, 0xb6,
+	0x61, 0x33, 0x3d, 0xfd, 0x22, 0x61, 0x92, 0x7c, 0x74, 0xe3, 0x53, 0x1a, 0xd0, 0xa0, 0x66, 0xb6,
+	0x7f, 0x31, 0x00, 0x4e, 0x58, 0x2c, 0x39, 0x1b, 0x8d, 0x28, 0x47, 0x9f, 0xc0, 0x8b, 0xf9, 0x49,
+	0x43, 0x6e, 0x11, 0xce, 0x83, 0xff, 0x1d, 0xc7, 0x79, 0xc8, 0xae, 0x8b, 0xd0, 0x87, 0x8d, 0x85,
+	0xea, 0xa0, 0xfd, 0x95, 0x4a, 0x77, 0x5e, 0x7d, 0x04, 0xc9, 0x1e, 0xfd, 0xf0, 0xe8, 0xf6, 0xce,
+	0x2d, 0xfd, 0x76, 0xe7, 0x96, 0x66, 0x77, 0xae, 0xf1, 0xc3, 0xd4, 0x35, 0x7e, 0x9a, 0xba, 0xc6,
+	0xaf, 0x53, 0xd7, 0xb8, 0x9d, 0xba, 0xc6, 0xef, 0x53, 0xd7, 0xf8, 0x73, 0xea, 0x96, 0x66, 0x53,
+	0xd7, 0xf8, 0xf1, 0x0f, 0xb7, 0x34, 0xb0, 0xd5, 0x30, 0x1c, 0xff, 0x1d, 0x00, 0x00, 0xff, 0xff,
+	0x07, 0xbf, 0xcc, 0x2c, 0x3f, 0x07, 0x00, 0x00,
 }

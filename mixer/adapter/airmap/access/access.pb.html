@@ -1,12 +1,16 @@
 ---
 title: access
 layout: protoc-gen-docs
-number_of_entries: 15
+number_of_entries: 17
 ---
 <h2 id="Services">Services</h2>
 <h3 id="Controller">Controller</h3>
 <section>
 <p>Controller models an entity that controls access to API resources.</p>
+
+<pre id="Controller.VerifyAPIKey"><code class="language-proto">rpc VerifyAPIKey(VerifyAPIKeyParameters) returns (VerifyAPIKeyResult)
+</code></pre>
+<p>VerifyAPIKey verifies an API key.</p>
 
 <pre id="Controller.AuthorizeAccess"><code class="language-proto">rpc AuthorizeAccess(AuthorizeAccessParameters) returns (AuthorizeAccessResult)
 </code></pre>
@@ -428,6 +432,94 @@ number_of_entries: 15
 <td><code>uint64</code></td>
 <td>
 <p>For how many accesses a result can be considered valid.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="VerifyAPIKeyParameters">VerifyAPIKeyParameters</h3>
+<section>
+<p>VerifyAPIKeyParameters bundles up parameters for calls to Controller.VerifyAPIKey.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="VerifyAPIKeyParameters.name">
+<td><code>name</code></td>
+<td><code><a href="#API.Name">API.Name</a></code></td>
+<td>
+<p>The name of the API.</p>
+
+</td>
+</tr>
+<tr id="VerifyAPIKeyParameters.version">
+<td><code>version</code></td>
+<td><code><a href="#API.Version">API.Version</a></code></td>
+<td>
+<p>The version of the API.</p>
+
+</td>
+</tr>
+<tr id="VerifyAPIKeyParameters.method">
+<td><code>method</code></td>
+<td><code><a href="#API.Method">API.Method</a></code></td>
+<td>
+<p>The method used for accessing the API.</p>
+
+</td>
+</tr>
+<tr id="VerifyAPIKeyParameters.key">
+<td><code>key</code></td>
+<td><code><a href="#API.Key">API.Key</a></code></td>
+<td>
+<p>The key accompanying the request.</p>
+
+</td>
+</tr>
+<tr id="VerifyAPIKeyParameters.timestamp">
+<td><code>timestamp</code></td>
+<td><code><a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#timestamp">google.protobuf.Timestamp</a></code></td>
+<td>
+<p>The time when the access happened.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="VerifyAPIKeyResult">VerifyAPIKeyResult</h3>
+<section>
+<p>VerifyAPIKeyResult bundles up the result of calls to Controller.VerifyAPIKey.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="VerifyAPIKeyResult.status">
+<td><code>status</code></td>
+<td><code><a href="#Status">Status</a></code></td>
+<td>
+<p>The status of an authorization request.</p>
+
+</td>
+</tr>
+<tr id="VerifyAPIKeyResult.validity">
+<td><code>validity</code></td>
+<td><code><a href="#Validity">Validity</a></code></td>
+<td>
+<p>The validity of the result.</p>
 
 </td>
 </tr>

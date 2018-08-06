@@ -16,6 +16,7 @@ import (
 	"istio.io/istio/mixer/adapter/airmap/access"
 	"istio.io/istio/mixer/adapter/airmap/config"
 	"istio.io/istio/mixer/pkg/adapter"
+	"istio.io/istio/mixer/template/apikey"
 	"istio.io/istio/mixer/template/authorization"
 )
 
@@ -31,6 +32,58 @@ type handler struct {
 
 func defaultParam() *config.Params {
 	return &config.Params{}
+}
+
+func (h *handler) HandleApiKey(ctxt context.Context, instance *apikey.Instance) (adapter.CheckResult, error) {
+	params := access.VerifyAPIKeyParameters{
+		Name: &access.API_Name{
+			AsString: instance.Api,
+		},
+		Method: &access.API_Method{
+			AsString: instance.ApiOperation,
+		},
+		Key: &access.API_Key{
+			AsString: instance.ApiKey,
+		},
+	}
+
+	if len(instance.ApiVersion) > 0 {
+		params.Version = &access.API_Version{
+			AsString: instance.ApiVersion,
+		}
+	}
+
+	ts, err := types.TimestampProto(instance.Timestamp)
+	if err != nil {
+		ts = types.TimestampNow()
+	}
+
+	params.Timestamp = ts
+
+	result, err := h.controller.VerifyAPIKey(ctxt, &params)
+	if err != nil {
+		return adapter.CheckResult{
+			Status: rpc.Status{
+				Code: int32(rpc.INTERNAL),
+			},
+			ValidDuration: defaultValidDuration,
+			ValidUseCount: 1,
+		}, err
+	}
+
+	duration, err := types.DurationFromProto(result.Validity.Duration)
+	if err != nil {
+		duration = defaultValidDuration
+	}
+
+	return adapter.CheckResult{
+		Status: rpc.Status{
+			Code:    int32(result.Status.Code),
+			Message: result.Status.Message,
+		},
+		ValidDuration: duration,
+		ValidUseCount: int32(result.Validity.Count),
+	}, nil
 }
 
 func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorization.Instance) (adapter.CheckResult, error) {
@@ -112,6 +165,7 @@ func GetInfo() adapter.Info {
 		Impl:        "istio.io/istio/mixer/adapter/airmap",
 		Description: "Dispatches to an in-cluster adapter via ReST",
 		SupportedTemplates: []string{
+			apikey.TemplateName,
 			authorization.TemplateName,
 		},
 		DefaultConfig: defaultParam(),

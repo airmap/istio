@@ -73,6 +73,21 @@ message API {
     }
 }
 
+// VerifyAPIKeyParameters bundles up parameters for calls to Controller.VerifyAPIKey.
+message VerifyAPIKeyParameters {
+    API.Name name                       = 1; // The name of the API.
+    API.Version version                 = 2; // The version of the API.
+    API.Method method                   = 3; // The method used for accessing the API.
+    API.Key key                         = 4; // The key accompanying the request.
+    google.protobuf.Timestamp timestamp = 5; // The time when the access happened.
+}
+
+// VerifyAPIKeyResult bundles up the result of calls to Controller.VerifyAPIKey.
+message VerifyAPIKeyResult {
+    Status status     = 1; // The status of an authorization request.
+    Validity validity = 2; // The validity of the result.
+}
+
 // AuthorizeAccessParameters bundles up parameters for calls to Controller.AuthorizeAccess.
 message AuthorizeAccessParameters {
     // Subject describes who is trying to access an API.
@@ -104,6 +119,9 @@ message AuthorizeAccessResult {
 
 // Controller models an entity that controls access to API resources.
 service Controller {
+    // VerifyAPIKey verifies an API key.
+    rpc VerifyAPIKey(VerifyAPIKeyParameters) returns (VerifyAPIKeyResult);
+
     // AuthorizeAccess authorizes API accesses.
     rpc AuthorizeAccess(AuthorizeAccessParameters) returns (AuthorizeAccessResult);
 }

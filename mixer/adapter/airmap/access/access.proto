@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+package access;
+
+// Code enumerates all known result codes.
+enum Code {
+    // Not an error; returned on success
+    //
+    // HTTP Mapping: 200 OK
+    CodeOK = 0;
+  
+    // The operation is forbidden.
+    //
+    // HTTP Mapping: 403 Forbidden
+    CodeForbidden = 1;
+
+    // The operation is not authorized.
+    //
+    // HTTP Mapping: 401 Unauthorized
+    CodeUnauthorized = 2;
+
+    // The quota for the operation has been exceeded.
+    //
+    // HTTP Mapping: 429 Too Many Requests
+    CodeQuotaExceeded = 3;
+}
+
+// Status summarizes the status of an operation.
+message Status {
+    Code code      = 1; // The status code.
+    string message = 2; // Message provides a human-readable message further describing the status.
+}
+
+// Validity describes limits on the validity of a result.
+message Validity {
+    google.protobuf.Duration duration = 1; // How long a result can be considered valid.
+    uint64 count                      = 2; // For how many accesses a result can be considered valid.
+}
+
+// API groups up types describing API accesses.
+message API {
+    // Namespace models the namespace that an API lives in.
+    message Namespace {
+        string as_string = 1;
+    }
+
+    // Name models the name of an API.
+    message Name {
+        string as_string = 1;
+    }
+
+    // Version models the version of an API.
+    message Version {
+        string as_string = 1;
+    }
+
+    // Resource models a specific resource of an API.
+    message Resource {
+        string as_string = 1;
+    }
+
+    // Method models an access method on an API.
+    message Method {
+        string as_string = 1;
+    }
+
+    // Key models an API key passed on with a request to an API.
+    message Key {
+        string as_string = 1;
+    }
+}
+
+// AuthorizeAccessParameters bundles up parameters for calls to Controller.AuthorizeAccess.
+message AuthorizeAccessParameters {
+    // Subject describes who is trying to access an API.
+    message Subject {
+        string user   = 1; // The user that is trying to access an API.
+        string groups = 2; // The groups that the user belongs to.
+        API.Key key = 3;   // The key accompanying the request.
+    }
+
+    // Action describes what a subject is trying to access.
+    message Action {
+        API.Namespace namespace             = 1; // The namespace that the API lives in.
+        API.Name name                       = 2; // The name of the API that is accessed.
+        API.Version version                 = 3; // The version of the API that is accessed.
+        API.Method method                   = 4; // The concrete access method.
+        API.Resource resource               = 5; // The specific resource that is accessed within the API.
+    }
+
+    Subject subject                     = 1; // Who tried to access the API.
+    Action action                       = 2; // The specific action on the API.
+    google.protobuf.Timestamp timestamp = 3; // The time when the access happened.
+}
+
+// AuthorizeAccessResult bundles up the result of calls to Controller.AuthorizeAccess.
+message AuthorizeAccessResult {
+    Status status     = 1; // The status of an authorization request.
+    Validity validity = 2; // The validity of the result.
+}
+
+// Controller models an entity that controls access to API resources.
+service Controller {
+    // AuthorizeAccess authorizes API accesses.
+    rpc AuthorizeAccess(AuthorizeAccessParameters) returns (AuthorizeAccessResult);
+}

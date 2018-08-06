@@ -19,29 +19,21 @@ package airmap
 
 import (
 	"context"
-	"reflect"
 	"testing"
 
-	"istio.io/istio/mixer/pkg/adapter"
 	"istio.io/istio/mixer/pkg/adapter/test"
-	"istio.io/istio/mixer/template/checknothing"
-	"istio.io/istio/mixer/template/listentry"
-	"istio.io/istio/mixer/template/quota"
+	"istio.io/istio/mixer/template/authorization"
 )
 
 func TestBasic(t *testing.T) {
 	info := GetInfo()
 
-	if !contains(info.SupportedTemplates, checknothing.TemplateName) ||
-		!contains(info.SupportedTemplates, listentry.TemplateName) ||
-		!contains(info.SupportedTemplates, quota.TemplateName) {
+	if !contains(info.SupportedTemplates, authorization.TemplateName) {
 		t.Error("Didn't find all expected supported templates")
 	}
 
 	b := info.NewBuilder().(*builder)
-	b.SetCheckNothingTypes(nil)
-	b.SetListEntryTypes(nil)
-	b.SetQuotaTypes(nil)
+	b.SetAuthorizationTypes(nil)
 	b.SetAdapterConfig(info.DefaultConfig)
 
 	if err := b.Validate(); err != nil {
@@ -51,42 +43,6 @@ func TestBasic(t *testing.T) {
 	handler, err := b.Build(context.Background(), test.NewEnv(t))
 	if err != nil {
 		t.Errorf("Got error %v, expecting success", err)
-	}
-
-	checkNothingHandler := handler.(checknothing.Handler)
-	result, err := checkNothingHandler.HandleCheckNothing(context.Background(), nil)
-	if err != nil {
-		t.Errorf("Got error %v, expecting success", err)
-	}
-
-	want := newResult(defaultParam())
-
-	if !reflect.DeepEqual(want, result) {
-		t.Errorf("Got %v, expected %v", result, want)
-	}
-
-	listEntryHandler := handler.(listentry.Handler)
-	result, err = listEntryHandler.HandleListEntry(context.Background(), nil)
-	if err != nil {
-		t.Errorf("Got error %v, expecting success", err)
-	}
-
-	if !reflect.DeepEqual(want, result) {
-		t.Errorf("Got %v, expected %v", result, want)
-	}
-
-	quotaHandler := handler.(quota.Handler)
-	qr, err := quotaHandler.HandleQuota(context.Background(), nil, adapter.QuotaArgs{QuotaAmount: 100})
-	if err != nil {
-		t.Errorf("Got error %v, expecting success", err)
-	}
-
-	if qr.Amount != 0 {
-		t.Errorf("Got %d quota, expecting 0", qr.Amount)
-	}
-
-	if qr.ValidDuration != 0 {
-		t.Errorf("Got duration of %v, expecting at 0 seconds", qr.ValidDuration)
 	}
 
 	if err = handler.Close(); err != nil {

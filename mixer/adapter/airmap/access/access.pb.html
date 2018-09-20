@@ -1,7 +1,7 @@
 ---
 title: access
 layout: protoc-gen-docs
-number_of_entries: 17
+number_of_entries: 23
 ---
 <h2 id="Services">Services</h2>
 <h3 id="Controller">Controller</h3>
@@ -15,6 +15,10 @@ number_of_entries: 17
 <pre id="Controller.AuthorizeAccess"><code class="language-proto">rpc AuthorizeAccess(AuthorizeAccessParameters) returns (AuthorizeAccessResult)
 </code></pre>
 <p>AuthorizeAccess authorizes API accesses.</p>
+
+<pre id="Controller.InsertProfile"><code class="language-proto">rpc InsertProfile(InsertProfileParameters) returns (InsertProfileResult)
+</code></pre>
+<p>InsertProfile inserts a newly created profile into the Platform database.</p>
 
 </section>
 <h2 id="Types">Types</h2>
@@ -264,19 +268,11 @@ number_of_entries: 17
 </tr>
 </thead>
 <tbody>
-<tr id="AuthorizeAccessParameters.Subject.user">
-<td><code>user</code></td>
-<td><code>string</code></td>
+<tr id="AuthorizeAccessParameters.Subject.credentials">
+<td><code>credentials</code></td>
+<td><code><a href="#Credentials">Credentials</a></code></td>
 <td>
-<p>The user that is trying to access an API.</p>
-
-</td>
-</tr>
-<tr id="AuthorizeAccessParameters.Subject.groups">
-<td><code>groups</code></td>
-<td><code>string</code></td>
-<td>
-<p>The groups that the user belongs to.</p>
+<p>The credentials for the request.</p>
 
 </td>
 </tr>
@@ -373,6 +369,149 @@ number_of_entries: 17
 </tr>
 </tbody>
 </table>
+</section>
+<h3 id="Credentials">Credentials</h3>
+<section>
+<p>Credentials bundles up types and members describing subjects.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Credentials.username">
+<td><code>username</code></td>
+<td><code><a href="#Credentials.Username">Credentials.Username</a></code></td>
+<td>
+<p>The name of the user.</p>
+
+</td>
+</tr>
+<tr id="Credentials.groups">
+<td><code>groups</code></td>
+<td><code><a href="#Credentials.Group">Credentials.Group[]</a></code></td>
+<td>
+<p>The groups that the user belongs to.</p>
+
+</td>
+</tr>
+<tr id="Credentials.password">
+<td><code>password</code></td>
+<td><code><a href="#Credentials.Password">Credentials.Password</a></code></td>
+<td>
+<p>The password of the user.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Credentials.Group">Credentials.Group</h3>
+<section>
+<p>Group models a group.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Credentials.Group.as_string">
+<td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Credentials.Password">Credentials.Password</h3>
+<section>
+<p>Password models a password.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Credentials.Password.as_string">
+<td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Credentials.Username">Credentials.Username</h3>
+<section>
+<p>Username models a username.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Credentials.Username.as_string">
+<td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="InsertProfileParameters">InsertProfileParameters</h3>
+<section>
+<p>InsertProfileParameters bundles up parameters for calls to Controller.InsertProfile</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="InsertProfileParameters.ID">
+<td><code>ID</code></td>
+<td><code>string</code></td>
+<td>
+<p>The identity provider ID of the profile</p>
+
+</td>
+</tr>
+<tr id="InsertProfileParameters.email">
+<td><code>email</code></td>
+<td><code>string</code></td>
+<td>
+<p>The email linked to the profile</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="InsertProfileResult">InsertProfileResult</h3>
+<section>
+<p>InsertProfileResult bundles up the result of calls to Controller.InsertProfile</p>
+
 </section>
 <h3 id="Status">Status</h3>
 <section>

@@ -89,8 +89,16 @@ func (h *handler) HandleApiKey(ctxt context.Context, instance *apikey.Instance) 
 func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorization.Instance) (adapter.CheckResult, error) {
 	params := access.AuthorizeAccessParameters{
 		Subject: &access.AuthorizeAccessParameters_Subject{
-			User:   instance.Subject.User,
-			Groups: instance.Subject.Groups,
+			Credentials: &access.Credentials{
+				Username: &access.Credentials_Username{
+					AsString: instance.Subject.User,
+				},
+				Groups: []*access.Credentials_Group{
+					&access.Credentials_Group{
+						AsString: instance.Subject.Groups,
+					},
+				},
+			},
 		},
 		Action: &access.AuthorizeAccessParameters_Action{
 			Namespace: &access.API_Namespace{

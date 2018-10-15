@@ -22,6 +22,11 @@ jobs:
       - bash: |
           set -exo pipefail
           if [[ "${BUILD_SOURCEBRANCHNAME}" != "master" ]]; then
+            export GOPATH=/tmp/go
+            export PATH=${GOPATH}/bin:${PATH}
+            mkdir -p ${GOPATH}/src/github.com/istio.io/istio
+            cp -R . ${GOPATH}/src/github.com/istio.io/istio
+            cd ${GOPATH}/src/github.com/istio.io/istio
             make build
           fi
         name: "build_pr"

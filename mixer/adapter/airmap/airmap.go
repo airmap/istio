@@ -11,6 +11,11 @@ import (
 	"regexp"
 	"time"
 
+	"go.uber.org/zap"
+	"istio.io/istio/pkg/log"
+
+	"google.golang.org/grpc/naming"
+
 	"github.com/gogo/googleapis/google/rpc"
 	"github.com/gogo/protobuf/types"
 	"google.golang.org/grpc"
@@ -211,7 +216,18 @@ func GetInfo() adapter.Info {
 			authorization.TemplateName,
 		},
 		DefaultConfig: defaultParam(),
-		NewBuilder:    func() adapter.HandlerBuilder { return &builder{} },
+		NewBuilder: func() adapter.HandlerBuilder {
+			balancer := grpc.Balancer(nil)
+			resolver, err := naming.NewDNSResolver()
+			if err != nil {
+				log.Error("failed to instantiate naming resolver", zap.Error(err))
+			} else {
+				balancer = grpc.RoundRobin(resolver)
+			}
+			return &builder{
+				balancer: balancer,
+			}
+		},
 	}
 }
 
@@ -220,6 +236,7 @@ var _ authorization.HandlerBuilder = &builder{}
 
 type builder struct {
 	adapterConfig *config.Params
+	balancer      grpc.Balancer
 }
 
 func (*builder) SetApiKeyTypes(map[string]*apikey.Type)               {}
@@ -235,7 +252,15 @@ func (*builder) Validate() (ce *adapter.ConfigErrors) {
 
 func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handler, error) {
 	// TODO(tvoss): Investigate whether we should use a secure transport here despite operating in-cluster.
-	cc, err := grpc.Dial(b.adapterConfig.Endpoint, grpc.WithInsecure())
+	options := []grpc.DialOption{
+		grpc.WithInsecure(),
+	}
+
+	if b.balancer != nil {
+		options = append(options, grpc.WithBalancer(b.balancer))
+	}
+
+	cc, err := grpc.Dial(b.adapterConfig.Endpoint, options...)
 	if err != nil {
 		return nil, err
 	}

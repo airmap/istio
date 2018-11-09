@@ -13,4 +13,11 @@ option go_package="config";
 // Configuration format for the AirMap adapter.
 message Params {
     string endpoint = 1; // The endpoint implementing access.Controller
+
+    string amqp_username = 2; // The username for the amqp producer
+    string amqp_password = 3; // The password for the amqp producer
+    string amqp_host = 4; // The host for the amqp producer
+    int32 amqp_port = 5; // The port for the amqp producer
+    string amqp_queuename = 6; // The queue name to push logs to on the amqp endpoint
+
 }

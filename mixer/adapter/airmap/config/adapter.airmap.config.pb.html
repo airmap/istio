@@ -2,6 +2,7 @@
 title: AirMap
 overview: Adapter that bridges over to an in-cluster adapter instance via ReST.
 layout: protoc-gen-docs
+generator: protoc-gen-docs
 number_of_entries: 1
 ---
 <p>The <code>airmap</code> adapter is designed to bridge over to an in-cluster adapter instance via ReST.</p>
@@ -19,11 +20,51 @@ number_of_entries: 1
 </tr>
 </thead>
 <tbody>
-<tr id="Params.endpoint">
+<tr id="Params-endpoint">
 <td><code>endpoint</code></td>
 <td><code>string</code></td>
 <td>
 <p>The endpoint implementing access.Controller</p>
+
+</td>
+</tr>
+<tr id="Params-amqp_username">
+<td><code>amqpUsername</code></td>
+<td><code>string</code></td>
+<td>
+<p>The username for the amqp producer</p>
+
+</td>
+</tr>
+<tr id="Params-amqp_password">
+<td><code>amqpPassword</code></td>
+<td><code>string</code></td>
+<td>
+<p>The password for the amqp producer</p>
+
+</td>
+</tr>
+<tr id="Params-amqp_host">
+<td><code>amqpHost</code></td>
+<td><code>string</code></td>
+<td>
+<p>The host for the amqp producer</p>
+
+</td>
+</tr>
+<tr id="Params-amqp_port">
+<td><code>amqpPort</code></td>
+<td><code>int32</code></td>
+<td>
+<p>The port for the amqp producer</p>
+
+</td>
+</tr>
+<tr id="Params-amqp_queuename">
+<td><code>amqpQueuename</code></td>
+<td><code>string</code></td>
+<td>
+<p>The queue name to push logs to on the amqp endpoint</p>
 
 </td>
 </tr>

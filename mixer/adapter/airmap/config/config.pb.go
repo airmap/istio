@@ -2,15 +2,15 @@
 // source: mixer/adapter/airmap/config/config.proto
 
 /*
-Package config is a generated protocol buffer package.
+	Package config is a generated protocol buffer package.
 
-The `airmap` adapter is designed to bridge over to an in-cluster adapter instance via ReST.
+	The `airmap` adapter is designed to bridge over to an in-cluster adapter instance via ReST.
 
-It is generated from these files:
-	mixer/adapter/airmap/config/config.proto
+	It is generated from these files:
+		mixer/adapter/airmap/config/config.proto
 
-It has these top-level messages:
-	Params
+	It has these top-level messages:
+		Params
 */
 package config
 
@@ -36,7 +36,12 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // Configuration format for the AirMap adapter.
 type Params struct {
-	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Endpoint      string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	AmqpUsername  string `protobuf:"bytes,2,opt,name=amqp_username,json=amqpUsername,proto3" json:"amqp_username,omitempty"`
+	AmqpPassword  string `protobuf:"bytes,3,opt,name=amqp_password,json=amqpPassword,proto3" json:"amqp_password,omitempty"`
+	AmqpHost      string `protobuf:"bytes,4,opt,name=amqp_host,json=amqpHost,proto3" json:"amqp_host,omitempty"`
+	AmqpPort      int32  `protobuf:"varint,5,opt,name=amqp_port,json=amqpPort,proto3" json:"amqp_port,omitempty"`
+	AmqpQueuename string `protobuf:"bytes,6,opt,name=amqp_queuename,json=amqpQueuename,proto3" json:"amqp_queuename,omitempty"`
 }
 
 func (m *Params) Reset()                    { *m = Params{} }
@@ -50,15 +55,47 @@ func (m *Params) GetEndpoint() string {
 	return ""
 }
 
+func (m *Params) GetAmqpUsername() string {
+	if m != nil {
+		return m.AmqpUsername
+	}
+	return ""
+}
+
+func (m *Params) GetAmqpPassword() string {
+	if m != nil {
+		return m.AmqpPassword
+	}
+	return ""
+}
+
+func (m *Params) GetAmqpHost() string {
+	if m != nil {
+		return m.AmqpHost
+	}
+	return ""
+}
+
+func (m *Params) GetAmqpPort() int32 {
+	if m != nil {
+		return m.AmqpPort
+	}
+	return 0
+}
+
+func (m *Params) GetAmqpQueuename() string {
+	if m != nil {
+		return m.AmqpQueuename
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Params)(nil), "adapter.airmap.config.Params")
 }
 func (this *Params) Equal(that interface{}) bool {
 	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
+		return this == nil
 	}
 
 	that1, ok := that.(*Params)
@@ -71,14 +108,26 @@ func (this *Params) Equal(that interface{}) bool {
 		}
 	}
 	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
+		return this == nil
 	} else if this == nil {
 		return false
 	}
 	if this.Endpoint != that1.Endpoint {
+		return false
+	}
+	if this.AmqpUsername != that1.AmqpUsername {
+		return false
+	}
+	if this.AmqpPassword != that1.AmqpPassword {
+		return false
+	}
+	if this.AmqpHost != that1.AmqpHost {
+		return false
+	}
+	if this.AmqpPort != that1.AmqpPort {
+		return false
+	}
+	if this.AmqpQueuename != that1.AmqpQueuename {
 		return false
 	}
 	return true
@@ -87,9 +136,14 @@ func (this *Params) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 5)
+	s := make([]string, 0, 10)
 	s = append(s, "&config.Params{")
 	s = append(s, "Endpoint: "+fmt.Sprintf("%#v", this.Endpoint)+",\n")
+	s = append(s, "AmqpUsername: "+fmt.Sprintf("%#v", this.AmqpUsername)+",\n")
+	s = append(s, "AmqpPassword: "+fmt.Sprintf("%#v", this.AmqpPassword)+",\n")
+	s = append(s, "AmqpHost: "+fmt.Sprintf("%#v", this.AmqpHost)+",\n")
+	s = append(s, "AmqpPort: "+fmt.Sprintf("%#v", this.AmqpPort)+",\n")
+	s = append(s, "AmqpQueuename: "+fmt.Sprintf("%#v", this.AmqpQueuename)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -122,6 +176,35 @@ func (m *Params) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintConfig(dAtA, i, uint64(len(m.Endpoint)))
 		i += copy(dAtA[i:], m.Endpoint)
 	}
+	if len(m.AmqpUsername) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.AmqpUsername)))
+		i += copy(dAtA[i:], m.AmqpUsername)
+	}
+	if len(m.AmqpPassword) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.AmqpPassword)))
+		i += copy(dAtA[i:], m.AmqpPassword)
+	}
+	if len(m.AmqpHost) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.AmqpHost)))
+		i += copy(dAtA[i:], m.AmqpHost)
+	}
+	if m.AmqpPort != 0 {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.AmqpPort))
+	}
+	if len(m.AmqpQueuename) > 0 {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.AmqpQueuename)))
+		i += copy(dAtA[i:], m.AmqpQueuename)
+	}
 	return i, nil
 }
 
@@ -138,6 +221,25 @@ func (m *Params) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Endpoint)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	l = len(m.AmqpUsername)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	l = len(m.AmqpPassword)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	l = len(m.AmqpHost)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.AmqpPort != 0 {
+		n += 1 + sovConfig(uint64(m.AmqpPort))
+	}
+	l = len(m.AmqpQueuename)
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
 	}
@@ -163,6 +265,11 @@ func (this *Params) String() string {
 	}
 	s := strings.Join([]string{`&Params{`,
 		`Endpoint:` + fmt.Sprintf("%v", this.Endpoint) + `,`,
+		`AmqpUsername:` + fmt.Sprintf("%v", this.AmqpUsername) + `,`,
+		`AmqpPassword:` + fmt.Sprintf("%v", this.AmqpPassword) + `,`,
+		`AmqpHost:` + fmt.Sprintf("%v", this.AmqpHost) + `,`,
+		`AmqpPort:` + fmt.Sprintf("%v", this.AmqpPort) + `,`,
+		`AmqpQueuename:` + fmt.Sprintf("%v", this.AmqpQueuename) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -232,6 +339,141 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Endpoint = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmqpUsername", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmqpUsername = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmqpPassword", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmqpPassword = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmqpHost", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmqpHost = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmqpPort", wireType)
+			}
+			m.AmqpPort = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AmqpPort |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AmqpQueuename", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AmqpQueuename = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -362,15 +604,22 @@ var (
 func init() { proto.RegisterFile("mixer/adapter/airmap/config/config.proto", fileDescriptorConfig) }
 
 var fileDescriptorConfig = []byte{
-	// 157 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0xc8, 0xcd, 0xac, 0x48,
-	0x2d, 0xd2, 0x4f, 0x4c, 0x49, 0x2c, 0x28, 0x01, 0xd1, 0x99, 0x45, 0xb9, 0x89, 0x05, 0xfa, 0xc9,
-	0xf9, 0x79, 0x69, 0x99, 0xe9, 0x50, 0x4a, 0xaf, 0xa0, 0x28, 0xbf, 0x24, 0x5f, 0x48, 0x14, 0xaa,
-	0x46, 0x0f, 0xa2, 0x46, 0x0f, 0x22, 0xa9, 0xa4, 0xc2, 0xc5, 0x16, 0x90, 0x58, 0x94, 0x98, 0x5b,
-	0x2c, 0x24, 0xc5, 0xc5, 0x91, 0x9a, 0x97, 0x52, 0x90, 0x9f, 0x99, 0x57, 0x22, 0xc1, 0xa8, 0xc0,
-	0xa8, 0xc1, 0x19, 0x04, 0xe7, 0x3b, 0x99, 0x5c, 0x78, 0x28, 0xc7, 0x70, 0xe3, 0xa1, 0x1c, 0xc3,
-	0x87, 0x87, 0x72, 0x8c, 0x0d, 0x8f, 0xe4, 0x18, 0x57, 0x3c, 0x92, 0x63, 0x3c, 0xf1, 0x48, 0x8e,
-	0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x5f, 0x3c, 0x92, 0x63, 0xf8, 0xf0, 0x48,
-	0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86, 0x28, 0x36, 0x88, 0xd9, 0x49, 0x6c, 0x60, 0x9b, 0x8d, 0x01,
-	0x01, 0x00, 0x00, 0xff, 0xff, 0xf8, 0xd3, 0x51, 0xb2, 0xa5, 0x00, 0x00, 0x00,
+	// 261 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x44, 0x90, 0x31, 0x4e, 0xc4, 0x30,
+	0x10, 0x45, 0x33, 0xc0, 0x46, 0xac, 0x05, 0x14, 0x91, 0x90, 0x2c, 0x90, 0x46, 0x2b, 0x10, 0x52,
+	0xaa, 0x6c, 0x01, 0x27, 0xa0, 0xa2, 0x0c, 0x48, 0x34, 0x34, 0xc8, 0x10, 0x03, 0x29, 0x9c, 0xf1,
+	0xda, 0x8e, 0xa0, 0xe4, 0x08, 0x1c, 0x83, 0xa3, 0xd0, 0xb1, 0x25, 0x25, 0x31, 0x0d, 0xe5, 0x1e,
+	0x01, 0xc5, 0x0e, 0xd9, 0x6a, 0xe4, 0xf7, 0x9f, 0x35, 0xa3, 0xcf, 0x72, 0x55, 0xbf, 0x48, 0x33,
+	0x17, 0x95, 0xd0, 0xae, 0x9f, 0xb5, 0x51, 0x42, 0xcf, 0xef, 0xa9, 0x79, 0xa8, 0x1f, 0x87, 0x51,
+	0x68, 0x43, 0x8e, 0xb2, 0xfd, 0xc1, 0x29, 0xa2, 0x53, 0xc4, 0xf0, 0xe8, 0x13, 0x58, 0x5a, 0x0a,
+	0x23, 0x94, 0xcd, 0x0e, 0xd8, 0xb6, 0x6c, 0x2a, 0x4d, 0x75, 0xe3, 0x38, 0xcc, 0x20, 0x9f, 0x5e,
+	0x8d, 0xef, 0xec, 0x98, 0xed, 0x0a, 0xb5, 0xd0, 0xb7, 0xad, 0x95, 0xa6, 0x11, 0x4a, 0xf2, 0x8d,
+	0x20, 0xec, 0xf4, 0xf0, 0x7a, 0x60, 0xa3, 0xa4, 0x85, 0xb5, 0xcf, 0x64, 0x2a, 0xbe, 0xb9, 0x96,
+	0xca, 0x81, 0x65, 0x87, 0x6c, 0x1a, 0xa4, 0x27, 0xb2, 0x8e, 0x6f, 0xc5, 0x35, 0x3d, 0xb8, 0x20,
+	0xeb, 0xc6, 0x50, 0x93, 0x71, 0x7c, 0x32, 0x83, 0x7c, 0x12, 0xc3, 0x92, 0x8c, 0xcb, 0x4e, 0xd8,
+	0x5e, 0x08, 0x17, 0xad, 0x6c, 0x65, 0x38, 0x22, 0x0d, 0xdf, 0xc3, 0xd2, 0xcb, 0x7f, 0x78, 0x7e,
+	0xb6, 0xec, 0x30, 0xf9, 0xea, 0x30, 0x59, 0x75, 0x08, 0xaf, 0x1e, 0xe1, 0xdd, 0x23, 0x7c, 0x78,
+	0x84, 0xa5, 0x47, 0xf8, 0xf6, 0x08, 0xbf, 0x1e, 0x93, 0x95, 0x47, 0x78, 0xfb, 0xc1, 0xe4, 0x26,
+	0x8d, 0x3d, 0xdc, 0xa5, 0xa1, 0xa5, 0xd3, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x53, 0xe5, 0x19,
+	0x54, 0x51, 0x01, 0x00, 0x00,
 }

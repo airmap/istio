@@ -3,13 +3,16 @@
 //go:generate $GOPATH/src/istio.io/istio/bin/mixer_codegen.sh -f mixer/adapter/airmap/config/config.proto
 
 // Package airmap provides an adapter that dispatches to an in-cluster adapter via ReST.
-// It implements the checkNothing, quota and listEntry templates.
+// It implements the apikey and authorization templates.
 package airmap
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/url"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -18,6 +21,8 @@ import (
 
 	"google.golang.org/grpc/naming"
 
+	mq "github.com/airmap/istio/mixer/adapter/airmap/amqpqueue"
+	"github.com/airmap/istio/mixer/template/logentry"
 	"github.com/gogo/googleapis/google/rpc"
 	"github.com/gogo/protobuf/types"
 	"google.golang.org/grpc"
@@ -44,6 +49,7 @@ var (
 
 type handler struct {
 	controller access.ControllerClient
+	amqpQueue  *mq.Queue
 }
 
 func defaultParam() *config.Params {
@@ -157,6 +163,29 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 }
 
 func (h *handler) Close() error {
+	if err := h.amqpQueue.Close(); err != nil {
+		log.Error("failed to close amqp producer", zap.Error(err))
+		return err
+	}
+	return nil
+}
+
+func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Instance) error {
+
+	for _, instance := range instances {
+		// TODO: Decide on formatting (perhaps just instance.Variables)
+		entry, err := json.Marshal(instance)
+		if err != nil {
+			log.Error("failed to marshal log instance", zap.Error(err))
+			continue
+		}
+		// TODO: UnsafePush vs Push, may want to escape here
+		if err := h.amqpQueue.UnsafePush(entry); err != nil {
+			log.Error("failed to push to amqp queue", zap.Error(err))
+			continue
+		}
+	}
+
 	return nil
 }
 
@@ -168,6 +197,7 @@ func GetInfo() adapter.Info {
 		Description: "Dispatches to an in-cluster adapter via ReST",
 		SupportedTemplates: []string{
 			authorization.TemplateName,
+			logentry.TemplateName,
 		},
 		DefaultConfig: defaultParam(),
 		NewBuilder: func() adapter.HandlerBuilder {
@@ -187,6 +217,8 @@ func GetInfo() adapter.Info {
 
 var _ authorization.HandlerBuilder = &builder{}
 
+var _ logentry.HandlerBuilder = &builder{}
+
 type builder struct {
 	adapterConfig *config.Params
 	balancer      grpc.Balancer
@@ -195,6 +227,9 @@ type builder struct {
 }
 
 func (*builder) SetAuthorizationTypes(map[string]*authorization.Type) {}
+
+// Set these later if we need to parse out types (marshalling directly right now)
+func (b *builder) SetLogEntryTypes(map[string]*logentry.Type) {}
 
 func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 	b.guard.Lock()
@@ -220,6 +255,7 @@ func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 			b.conn = cc
 		}
 	}
+
 }
 
 func (*builder) Validate() (ce *adapter.ConfigErrors) {
@@ -234,7 +270,26 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 		return nil, errors.New("invalid client connection")
 	}
 
+	amqpConnection := mq.New(b.adapterConfig.AmqpQueuename, joinStrings(
+		"amqp://",
+		b.adapterConfig.AmqpUsername,
+		":",
+		b.adapterConfig.AmqpPassword,
+		"@",
+		b.adapterConfig.AmqpHost,
+		":",
+		strconv.Itoa(int(b.adapterConfig.AmqpPort))))
+
 	return &handler{
+		amqpQueue:  amqpConnection,
 		controller: access.NewControllerClient(b.conn),
 	}, nil
+}
+
+func joinStrings(stringSet ...string) string {
+	var builtString strings.Builder
+	for _, str := range stringSet {
+		builtString.WriteString(str)
+	}
+	return builtString.String()
 }

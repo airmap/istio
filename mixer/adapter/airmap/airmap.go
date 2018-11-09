@@ -8,7 +8,9 @@ package airmap
 
 import (
 	"context"
-	"regexp"
+	"errors"
+	"net/url"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
@@ -22,19 +24,16 @@ import (
 	"istio.io/istio/mixer/adapter/airmap/access"
 	"istio.io/istio/mixer/adapter/airmap/config"
 	"istio.io/istio/mixer/pkg/adapter"
-	"istio.io/istio/mixer/template/apikey"
 	"istio.io/istio/mixer/template/authorization"
 )
 
 const (
 	keyAPIKey            = "api-key"
-	keyPath              = "path"
 	keyVersion           = "version"
 	defaultValidDuration = 5 * time.Second
 )
 
 var (
-	apiKeyRegExp  = regexp.MustCompile(".*?apikey=(.*)")
 	statusCodeLut = map[access.Code]rpc.Code{
 		access.CodeOK:            rpc.OK,
 		access.CodeForbidden:     rpc.PERMISSION_DENIED,
@@ -51,59 +50,19 @@ func defaultParam() *config.Params {
 	return &config.Params{}
 }
 
-func (h *handler) HandleApiKey(ctxt context.Context, instance *apikey.Instance) (adapter.CheckResult, error) {
-	params := access.VerifyAPIKeyParameters{
-		Name: &access.API_Name{
-			AsString: instance.Api,
-		},
-		Method: &access.API_Method{
-			AsString: instance.ApiOperation,
-		},
-		Key: &access.API_Key{
-			AsString: instance.ApiKey,
-		},
-	}
-
-	if len(instance.ApiVersion) > 0 {
-		params.Version = &access.API_Version{
-			AsString: instance.ApiVersion,
-		}
-	}
-
-	ts, err := types.TimestampProto(instance.Timestamp)
-	if err != nil {
-		ts = types.TimestampNow()
-	}
-
-	params.Timestamp = ts
-
-	result, err := h.controller.VerifyAPIKey(ctxt, &params)
-	if err != nil {
-		return adapter.CheckResult{
-			Status: rpc.Status{
-				Code: int32(rpc.INTERNAL),
-			},
-			ValidDuration: defaultValidDuration,
-			ValidUseCount: 1,
-		}, err
-	}
-
-	duration, err := types.DurationFromProto(result.Validity.Duration)
-	if err != nil {
-		duration = defaultValidDuration
-	}
-
-	return adapter.CheckResult{
-		Status: rpc.Status{
-			Code:    int32(statusCodeLut[result.Status.Code]),
-			Message: result.Status.Message,
-		},
-		ValidDuration: duration,
-		ValidUseCount: int32(result.Validity.Count),
-	}, nil
-}
-
 func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorization.Instance) (adapter.CheckResult, error) {
+	if u, err := url.Parse(instance.Action.Path); err == nil {
+		// Handling the case of tiledata here: The api key comes in via a query parameter
+		// named 'apikey' and envoy only extracts api keys from query parameters with keys:
+		//   key
+		//   api_key
+		if s := u.Query().Get("apikey"); len(s) > 0 {
+			instance.Subject.Properties[keyAPIKey] = s
+		}
+
+		instance.Action.Path = u.Path
+	}
+
 	params := access.AuthorizeAccessParameters{
 		Subject: &access.AuthorizeAccessParameters_Subject{
 			Credentials: &access.Credentials{
@@ -139,20 +98,6 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 		}
 	}
 
-	// Handling the case of tiledata here: The api key comes in via a query parameter
-	// named 'apikey' and envoy only extracts api keys from query parameters with keys:
-	//   key
-	//   api_key
-	if v, present := instance.Action.Properties[keyPath]; present {
-		if s, ok := v.(string); ok {
-			if match := apiKeyRegExp.FindStringSubmatch(s); match != nil {
-				params.Subject.Key = &access.API_Key{
-					AsString: match[1],
-				}
-			}
-		}
-	}
-
 	if v, present := instance.Subject.Properties[keyAPIKey]; present {
 		if s, ok := v.(string); ok {
 			params.Subject.Key = &access.API_Key{
@@ -175,7 +120,13 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 		}
 	}
 
-	result, err := h.controller.AuthorizeAccess(ctxt, &params, grpc.FailFast(true))
+	// 2 seconds is a random choice at this point in time. We obviously want to achieve way lower latency.
+	// However, we need to make sure that we are not stalling incoming requests. In particular, as we are
+	// potentially operating in the context of an ingress gateway.
+	ctxt, cancel := context.WithTimeout(ctxt, 2*time.Second)
+	defer cancel()
+
+	result, err := h.controller.AuthorizeAccess(ctxt, &params)
 	if err != nil {
 		return adapter.CheckResult{
 			Status: rpc.Status{
@@ -186,9 +137,13 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 		}, err
 	}
 
-	duration, err := types.DurationFromProto(result.Validity.Duration)
-	if err != nil {
-		duration = defaultValidDuration
+	duration := defaultValidDuration
+
+	if result.Validity != nil {
+		duration, err = types.DurationFromProto(result.Validity.Duration)
+		if err != nil {
+			duration = defaultValidDuration
+		}
 	}
 
 	return adapter.CheckResult{
@@ -201,7 +156,7 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 	}, nil
 }
 
-func (*handler) Close() error {
+func (h *handler) Close() error {
 	return nil
 }
 
@@ -212,7 +167,6 @@ func GetInfo() adapter.Info {
 		Impl:        "istio.io/istio/mixer/adapter/airmap",
 		Description: "Dispatches to an in-cluster adapter via ReST",
 		SupportedTemplates: []string{
-			apikey.TemplateName,
 			authorization.TemplateName,
 		},
 		DefaultConfig: defaultParam(),
@@ -231,19 +185,41 @@ func GetInfo() adapter.Info {
 	}
 }
 
-var _ apikey.HandlerBuilder = &builder{}
 var _ authorization.HandlerBuilder = &builder{}
 
 type builder struct {
 	adapterConfig *config.Params
 	balancer      grpc.Balancer
+	conn          *grpc.ClientConn
+	guard         sync.Mutex
 }
 
-func (*builder) SetApiKeyTypes(map[string]*apikey.Type)               {}
 func (*builder) SetAuthorizationTypes(map[string]*authorization.Type) {}
 
 func (b *builder) SetAdapterConfig(cfg adapter.Config) {
-	b.adapterConfig = cfg.(*config.Params)
+	b.guard.Lock()
+	defer b.guard.Unlock()
+
+	if b.conn != nil {
+		_ = b.conn.Close()
+	}
+
+	if b.adapterConfig = cfg.(*config.Params); b.adapterConfig != nil {
+		options := []grpc.DialOption{
+			grpc.WithInsecure(),
+		}
+
+		if b.balancer != nil {
+			options = append(options, grpc.WithBalancer(b.balancer))
+		}
+
+		cc, err := grpc.Dial(b.adapterConfig.Endpoint, options...)
+		if err != nil {
+			b.conn = nil
+		} else {
+			b.conn = cc
+		}
+	}
 }
 
 func (*builder) Validate() (ce *adapter.ConfigErrors) {
@@ -251,21 +227,14 @@ func (*builder) Validate() (ce *adapter.ConfigErrors) {
 }
 
 func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handler, error) {
-	// TODO(tvoss): Investigate whether we should use a secure transport here despite operating in-cluster.
-	options := []grpc.DialOption{
-		grpc.WithInsecure(),
-	}
+	b.guard.Lock()
+	defer b.guard.Unlock()
 
-	if b.balancer != nil {
-		options = append(options, grpc.WithBalancer(b.balancer))
-	}
-
-	cc, err := grpc.Dial(b.adapterConfig.Endpoint, options...)
-	if err != nil {
-		return nil, err
+	if b.conn == nil {
+		return nil, errors.New("invalid client connection")
 	}
 
 	return &handler{
-		controller: access.NewControllerClient(cc),
+		controller: access.NewControllerClient(b.conn),
 	}, nil
 }

@@ -171,7 +171,7 @@ func (h *handler) Close() error {
 }
 
 func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Instance) error {
-
+	h.amqpQueue.Push([]byte("Test on HandleLogEntry"))
 	for _, instance := range instances {
 		// TODO: Decide on formatting (perhaps just instance.Variables)
 		entry, err := json.Marshal(instance)
@@ -180,7 +180,7 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 			continue
 		}
 		// TODO: UnsafePush vs Push, may want to escape here
-		if err := h.amqpQueue.UnsafePush(entry); err != nil {
+		if err := h.amqpQueue.Push(entry); err != nil {
 			log.Error("failed to push to amqp queue", zap.Error(err))
 			continue
 		}
@@ -279,6 +279,8 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 		b.adapterConfig.AmqpHost,
 		":",
 		strconv.Itoa(int(b.adapterConfig.AmqpPort))))
+
+	amqpConnection.Push([]byte("Test on Build"))
 
 	return &handler{
 		amqpQueue:  amqpConnection,

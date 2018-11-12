@@ -21,15 +21,15 @@ import (
 
 	"google.golang.org/grpc/naming"
 
-	mq "github.com/airmap/istio/mixer/adapter/airmap/amqpqueue"
-	"github.com/airmap/istio/mixer/template/logentry"
 	"github.com/gogo/googleapis/google/rpc"
 	"github.com/gogo/protobuf/types"
 	"google.golang.org/grpc"
 	"istio.io/istio/mixer/adapter/airmap/access"
+	mq "istio.io/istio/mixer/adapter/airmap/amqpqueue"
 	"istio.io/istio/mixer/adapter/airmap/config"
 	"istio.io/istio/mixer/pkg/adapter"
 	"istio.io/istio/mixer/template/authorization"
+	"istio.io/istio/mixer/template/logentry"
 )
 
 const (

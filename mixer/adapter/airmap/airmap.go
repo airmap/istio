@@ -171,7 +171,9 @@ func (h *handler) Close() error {
 }
 
 func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Instance) error {
-	h.amqpQueue.Push([]byte("Test on HandleLogEntry"))
+	if err := h.amqpQueue.Push([]byte("Test on HandleLogEntry")); err != nil {
+		log.Error("Failed to test HandleLogEntry", zap.Error(err))
+	}
 	for _, instance := range instances {
 		// TODO: Decide on formatting (perhaps just instance.Variables)
 		entry, err := json.Marshal(instance)
@@ -280,7 +282,9 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 		":",
 		strconv.Itoa(int(b.adapterConfig.AmqpPort))))
 
-	amqpConnection.Push([]byte("Test on Build"))
+	if err := amqpConnection.Push([]byte("Test on Build")); err != nil {
+		return nil, errors.New("Failed to push")
+	}
 
 	return &handler{
 		amqpQueue:  amqpConnection,

@@ -171,9 +171,13 @@ func (h *handler) Close() error {
 }
 
 func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Instance) error {
+
+	log.Info("Testing HandleLogEntry....")
+
 	if err := h.amqpQueue.Push([]byte("Test on HandleLogEntry")); err != nil {
 		log.Error("Failed to test HandleLogEntry", zap.Error(err))
 	}
+	log.Info("HandleLogEntry submitted")
 	for _, instance := range instances {
 		// TODO: Decide on formatting (perhaps just instance.Variables)
 		entry, err := json.Marshal(instance)
@@ -272,6 +276,7 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 		return nil, errors.New("invalid client connection")
 	}
 
+	log.Info("Build: New AMQP Connection....")
 	amqpConnection := mq.New(b.adapterConfig.AmqpQueuename, joinStrings(
 		"amqp://",
 		b.adapterConfig.AmqpUsername,
@@ -282,10 +287,12 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 		":",
 		strconv.Itoa(int(b.adapterConfig.AmqpPort))))
 
+	log.Info("Build: Sending test push....")
 	if err := amqpConnection.Push([]byte("Test on Build")); err != nil {
 		return nil, errors.New("Failed to push")
 	}
 
+	log.Info("Build: Returning handler....")
 	return &handler{
 		amqpQueue:  amqpConnection,
 		controller: access.NewControllerClient(b.conn),

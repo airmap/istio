@@ -2,7 +2,7 @@
 title: access
 layout: protoc-gen-docs
 generator: protoc-gen-docs
-number_of_entries: 25
+number_of_entries: 34
 ---
 <h2 id="Services">Services</h2>
 <h3 id="Controller">Controller</h3>
@@ -21,6 +21,8 @@ number_of_entries: 25
 </code></pre>
 <p>InsertProfile inserts a newly created profile into the Platform database.</p>
 
+<pre id="Controller-InsertAccessLog"><code class="language-proto">rpc InsertAccessLog(AccessLogEntryParameters) returns (AccessLogResult)
+</code></pre>
 </section>
 <h2 id="Types">Types</h2>
 <h3 id="API">API</h3>
@@ -153,6 +155,427 @@ number_of_entries: 25
 <tbody>
 <tr id="API-Version-as_string">
 <td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogEntry">AccessLogEntry</h3>
+<section>
+</section>
+<h3 id="AccessLogEntry-Destination">AccessLogEntry.Destination</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogEntry-Destination-ip">
+<td><code>ip</code></td>
+<td><code>bytes</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Destination-app">
+<td><code>app</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Destination-servicehost">
+<td><code>servicehost</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Destination-workload">
+<td><code>workload</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Destination-name">
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Destination-namespace">
+<td><code>namespace</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Destination-owner">
+<td><code>owner</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Destination-principal">
+<td><code>principal</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogEntry-Internal">AccessLogEntry.Internal</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogEntry-Internal-connection_security_policy">
+<td><code>connectionSecurityPolicy</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Internal-requested_server_name">
+<td><code>requestedServerName</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Internal-reporter">
+<td><code>reporter</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogEntry-Request">AccessLogEntry.Request</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogEntry-Request-api_claims">
+<td><code>apiClaims</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-api_key">
+<td><code>apiKey</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-protocol">
+<td><code>protocol</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-method">
+<td><code>method</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-url">
+<td><code>url</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-url_path">
+<td><code>urlPath</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-request_size">
+<td><code>requestSize</code></td>
+<td><code>int64</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-request_id">
+<td><code>requestId</code></td>
+<td><code>int64</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-client_trace_id">
+<td><code>clientTraceId</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-userAgent">
+<td><code>userAgent</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-received_bytes">
+<td><code>receivedBytes</code></td>
+<td><code>int64</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-referer">
+<td><code>referer</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-http_authority">
+<td><code>httpAuthority</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Request-x_forwarded_for">
+<td><code>xForwardedFor</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogEntry-Response">AccessLogEntry.Response</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogEntry-Response-response_code">
+<td><code>responseCode</code></td>
+<td><code>int64</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Response-response_size">
+<td><code>responseSize</code></td>
+<td><code>int64</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Response-latency">
+<td><code>latency</code></td>
+<td><code><a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#duration">google.protobuf.Duration</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Response-response_timestamp">
+<td><code>responseTimestamp</code></td>
+<td><code><a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#timestamp">google.protobuf.Timestamp</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Response-sent_bytes">
+<td><code>sentBytes</code></td>
+<td><code>int64</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Response-grpcStatus">
+<td><code>grpcStatus</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Response-grpcMessage">
+<td><code>grpcMessage</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogEntry-Source">AccessLogEntry.Source</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogEntry-Source-ip">
+<td><code>ip</code></td>
+<td><code>bytes</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Source-app">
+<td><code>app</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Source-principal">
+<td><code>principal</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Source-name">
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Source-workload">
+<td><code>workload</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Source-namespace">
+<td><code>namespace</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntry-Source-owner">
+<td><code>owner</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogEntryParameters">AccessLogEntryParameters</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogEntryParameters-severity">
+<td><code>severity</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-timestamp">
+<td><code>timestamp</code></td>
+<td><code><a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#timestamp">google.protobuf.Timestamp</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-variables">
+<td><code>variables</code></td>
+<td><code><a href="#AccessLogEntryParameters-Variables">AccessLogEntryParameters.Variables</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-monitoredResourceType">
+<td><code>monitoredResourceType</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-monitoredResourceDimensions">
+<td><code>monitoredResourceDimensions</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogEntryParameters-Variables">AccessLogEntryParameters.Variables</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogEntryParameters-Variables-source">
+<td><code>source</code></td>
+<td><code><a href="#AccessLogEntry-Source">AccessLogEntry.Source</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-Variables-destination">
+<td><code>destination</code></td>
+<td><code><a href="#AccessLogEntry-Destination">AccessLogEntry.Destination</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-Variables-request">
+<td><code>request</code></td>
+<td><code><a href="#AccessLogEntry-Request">AccessLogEntry.Request</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-Variables-response">
+<td><code>response</code></td>
+<td><code><a href="#AccessLogEntry-Response">AccessLogEntry.Response</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogEntryParameters-Variables-internal">
+<td><code>internal</code></td>
+<td><code><a href="#AccessLogEntry-Internal">AccessLogEntry.Internal</a></code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="AccessLogResult">AccessLogResult</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="AccessLogResult-status">
+<td><code>status</code></td>
+<td><code>int32</code></td>
+<td>
+</td>
+</tr>
+<tr id="AccessLogResult-message">
+<td><code>message</code></td>
 <td><code>string</code></td>
 <td>
 </td>

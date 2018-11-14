@@ -171,4 +171,91 @@ service Controller {
 
   // InsertProfile inserts a newly created profile into the Platform database.
   rpc InsertProfile(InsertProfileParameters) returns (InsertProfileResult);
+
+  rpc InsertAccessLog(AccessLogEntryParameters) returns (AccessLogResult);
 }
+
+
+// AccessLog
+
+message AccessLogResult {
+  int32 status = 1;
+  string message = 2;
+}
+
+message AccessLogEntry {
+
+  message Source {
+    bytes ip = 1;
+    string app = 2;
+    string principal = 3;
+    string name = 4;
+    string workload = 5;
+    string namespace = 6;
+    string owner = 7;
+  }
+
+  message Destination {
+    bytes ip = 1;
+    string app = 2;
+    string servicehost = 3;
+    string workload = 4;
+    string name = 5;
+    string namespace = 6;
+    string owner = 7;
+    string principal = 8;
+  }
+
+  message Request {
+    string api_claims = 1;
+    string api_key = 2;
+    string protocol = 3;
+    string method = 4;
+    string url = 5;
+    string url_path = 6;
+    int64 request_size = 7;
+    int64 request_id = 8;
+    string client_trace_id = 9;
+    string userAgent = 10;
+    int64 received_bytes = 11;
+    string referer = 12;
+    string http_authority = 13;
+    string x_forwarded_for = 14;
+  }
+
+  message Response {
+    int64 response_code = 1;
+    int64 response_size = 2;
+    google.protobuf.Duration latency = 3;
+    google.protobuf.Timestamp response_timestamp = 4;
+    int64 sent_bytes = 5;
+    string grpcStatus = 6;
+    string grpcMessage = 7;
+  }
+
+  message Internal {
+    string connection_security_policy = 1;
+    string requested_server_name = 2;
+    string reporter = 3;
+  }
+
+}
+
+message AccessLogEntryParameters {
+
+  message Variables {
+    AccessLogEntry.Source source = 1;
+    AccessLogEntry.Destination destination = 2;
+    AccessLogEntry.Request request = 3;
+    AccessLogEntry.Response response = 4;
+    AccessLogEntry.Internal internal = 5;
+  }
+
+  string severity = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  Variables variables = 3;
+  string monitoredResourceType = 4;
+  string monitoredResourceDimensions = 5;
+}
+
+

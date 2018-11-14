@@ -1,6 +1,7 @@
 // Copyright 2018 AirMap Inc.
 
 //go:generate $GOPATH/src/istio.io/istio/bin/mixer_codegen.sh -f mixer/adapter/airmap/config/config.proto
+//go:generate $GOPATH/src/istio.io/istio/bin/mixer_codegen.sh -f mixer/adapter/airmap/access/access.proto
 
 // Package airmap provides an adapter that dispatches to an in-cluster adapter via ReST.
 // It implements the apikey and authorization templates.
@@ -8,11 +9,8 @@ package airmap
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"net/url"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -48,8 +46,9 @@ var (
 )
 
 type handler struct {
-	controller access.ControllerClient
-	amqpQueue  *mq.Queue
+	controller    access.ControllerClient
+	amqpQueue     *mq.Queue
+	logEntryTypes map[string]*logentry.Type
 }
 
 func defaultParam() *config.Params {
@@ -163,32 +162,81 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 }
 
 func (h *handler) Close() error {
-	if err := h.amqpQueue.Close(); err != nil {
-		log.Error("failed to close amqp producer", zap.Error(err))
-		return err
-	}
 	return nil
 }
 
 func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Instance) error {
 
-	log.Info("Testing HandleLogEntry....")
+	for _, ins := range instances {
 
-	if err := h.amqpQueue.Push([]byte("Test on HandleLogEntry")); err != nil {
-		log.Error("Failed to test HandleLogEntry", zap.Error(err))
-	}
-	log.Info("HandleLogEntry submitted")
-	for _, instance := range instances {
-		// TODO: Decide on formatting (perhaps just instance.Variables)
-		entry, err := json.Marshal(instance)
+		instanceTimestamp, err := types.TimestampProto(ins.Timestamp)
 		if err != nil {
-			log.Error("failed to marshal log instance", zap.Error(err))
-			continue
+			return err
 		}
-		// TODO: UnsafePush vs Push, may want to escape here
-		if err := h.amqpQueue.Push(entry); err != nil {
-			log.Error("failed to push to amqp queue", zap.Error(err))
-			continue
+
+		// Need to define our own template, as this is very fragile.  First run only.
+		params := access.AccessLogEntryParameters{
+			Severity:              ins.Severity,
+			Timestamp:             instanceTimestamp,
+			MonitoredResourceType: ins.MonitoredResourceType,
+			Variables: &access.AccessLogEntryParameters_Variables{
+				Source: &access.AccessLogEntry_Source{
+					Ip:        ins.Variables["sourceIp"].([]byte),
+					App:       ins.Variables["sourceApp"].(string),
+					Principal: ins.Variables["sourcePrincipal"].(string),
+					Name:      ins.Variables["sourceName"].(string),
+					Workload:  ins.Variables["sourceWorkload"].(string),
+					Namespace: ins.Variables["sourceNamespace"].(string),
+					Owner:     ins.Variables["sourceOwner"].(string),
+				},
+				Destination: &access.AccessLogEntry_Destination{
+					App:         ins.Variables["destinationApp"].(string),
+					Ip:          ins.Variables["destinationIp"].([]byte),
+					Servicehost: ins.Variables["destinationServiceHost"].(string),
+					Workload:    ins.Variables["destinationWorkload"].(string),
+					Name:        ins.Variables["destinationName"].(string),
+					Namespace:   ins.Variables["destinationNamespace"].(string),
+					Owner:       ins.Variables["destinationOwner"].(string),
+					Principal:   ins.Variables["destinationPrincipal"].(string),
+				},
+				Request: &access.AccessLogEntry_Request{
+					ApiClaims:     ins.Variables["apiClaims"].(string),
+					ApiKey:        ins.Variables["apiKey"].(string),
+					Protocol:      ins.Variables["protocol"].(string),
+					Method:        ins.Variables["method"].(string),
+					Url:           ins.Variables["url"].(string),
+					UrlPath:       ins.Variables["urlPath"].(string),
+					RequestSize:   ins.Variables["requestSize"].(int64),
+					RequestId:     ins.Variables["requestId"].(int64),
+					ClientTraceId: ins.Variables["clientTraceId"].(string),
+					UserAgent:     ins.Variables["userAgent"].(string),
+					ReceivedBytes: ins.Variables["receivedBytes"].(int64),
+					Referer:       ins.Variables["referer"].(string),
+					HttpAuthority: ins.Variables["httpAuthority"].(string),
+					XForwardedFor: ins.Variables["xForwardedFor"].(string),
+				},
+				Response: &access.AccessLogEntry_Response{
+					ResponseCode:      ins.Variables["responseCode"].(int64),
+					ResponseSize:      ins.Variables["responseSize"].(int64),
+					Latency:           ins.Variables["latency"].(*types.Duration),
+					ResponseTimestamp: ins.Variables["responseTimestamp"].(*types.Timestamp),
+					SentBytes:         ins.Variables["sentBytes"].(int64),
+					GrpcStatus:        ins.Variables["grpcStatus"].(string),
+					GrpcMessage:       ins.Variables["grpcMessage"].(string),
+				},
+				Internal: &access.AccessLogEntry_Internal{
+					ConnectionSecurityPolicy: ins.Variables["connection_security_policy"].(string),
+					RequestedServerName:      ins.Variables["requestedServerName"].(string),
+					Reporter:                 ins.Variables["reporter"].(string),
+				},
+			},
+		}
+
+		ctxt, cancel := context.WithTimeout(ctxt, 2*time.Second)
+		defer cancel()
+
+		if _, err := h.controller.InsertAccessLog(ctxt, &params); err != nil {
+			return err
 		}
 	}
 
@@ -230,12 +278,14 @@ type builder struct {
 	balancer      grpc.Balancer
 	conn          *grpc.ClientConn
 	guard         sync.Mutex
+	logEntryTypes map[string]*logentry.Type
 }
 
 func (*builder) SetAuthorizationTypes(map[string]*authorization.Type) {}
 
-// Set these later if we need to parse out types (marshalling directly right now)
-func (b *builder) SetLogEntryTypes(map[string]*logentry.Type) {}
+func (b *builder) SetLogEntryTypes(importTypes map[string]*logentry.Type) {
+	b.logEntryTypes = importTypes
+}
 
 func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 	b.guard.Lock()
@@ -276,33 +326,8 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 		return nil, errors.New("invalid client connection")
 	}
 
-	log.Info("Build: New AMQP Connection....")
-	amqpConnection := mq.New(b.adapterConfig.AmqpQueuename, joinStrings(
-		"amqp://",
-		b.adapterConfig.AmqpUsername,
-		":",
-		b.adapterConfig.AmqpPassword,
-		"@",
-		b.adapterConfig.AmqpHost,
-		":",
-		strconv.Itoa(int(b.adapterConfig.AmqpPort))))
-
-	log.Info("Build: Sending test push....")
-	if err := amqpConnection.Push([]byte("Test on Build")); err != nil {
-		return nil, errors.New("Failed to push")
-	}
-
-	log.Info("Build: Returning handler....")
 	return &handler{
-		amqpQueue:  amqpConnection,
-		controller: access.NewControllerClient(b.conn),
+		controller:    access.NewControllerClient(b.conn),
+		logEntryTypes: b.logEntryTypes,
 	}, nil
-}
-
-func joinStrings(stringSet ...string) string {
-	var builtString strings.Builder
-	for _, str := range stringSet {
-		builtString.WriteString(str)
-	}
-	return builtString.String()
 }

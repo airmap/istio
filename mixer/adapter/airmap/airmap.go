@@ -23,7 +23,6 @@ import (
 	"github.com/gogo/protobuf/types"
 	"google.golang.org/grpc"
 	"istio.io/istio/mixer/adapter/airmap/access"
-	mq "istio.io/istio/mixer/adapter/airmap/amqpqueue"
 	"istio.io/istio/mixer/adapter/airmap/config"
 	"istio.io/istio/mixer/pkg/adapter"
 	"istio.io/istio/mixer/template/authorization"
@@ -47,7 +46,6 @@ var (
 
 type handler struct {
 	controller    access.ControllerClient
-	amqpQueue     *mq.Queue
 	logEntryTypes map[string]*logentry.Type
 }
 
@@ -175,11 +173,11 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 		}
 
 		// Need to define our own template, as this is very fragile.  First run only.
-		params := access.AccessLogEntryParameters{
+		params := access.InsertAccessLogParameters{
 			Severity:              ins.Severity,
 			Timestamp:             instanceTimestamp,
 			MonitoredResourceType: ins.MonitoredResourceType,
-			Variables: &access.AccessLogEntryParameters_Variables{
+			Variables: &access.AccessLogEntry_Variables{
 				Source: &access.AccessLogEntry_Source{
 					Ip:        ins.Variables["sourceIp"].([]byte),
 					App:       ins.Variables["sourceApp"].(string),

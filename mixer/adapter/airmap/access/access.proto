@@ -172,18 +172,26 @@ service Controller {
   // InsertProfile inserts a newly created profile into the Platform database.
   rpc InsertProfile(InsertProfileParameters) returns (InsertProfileResult);
 
-  rpc InsertAccessLog(AccessLogEntryParameters) returns (AccessLogResult);
+  rpc InsertAccessLog(InsertAccessLogParameters) returns (InsertAccessLogResult);
 }
 
 
 // AccessLog
 
-message AccessLogResult {
+message InsertAccessLogResult {
   int32 status = 1;
   string message = 2;
 }
 
 message AccessLogEntry {
+
+  message Variables {
+    AccessLogEntry.Source source = 1;
+    AccessLogEntry.Destination destination = 2;
+    AccessLogEntry.Request request = 3;
+    AccessLogEntry.Response response = 4;
+    AccessLogEntry.Internal internal = 5;
+  }
 
   message Source {
     bytes ip = 1;
@@ -241,19 +249,11 @@ message AccessLogEntry {
 
 }
 
-message AccessLogEntryParameters {
-
-  message Variables {
-    AccessLogEntry.Source source = 1;
-    AccessLogEntry.Destination destination = 2;
-    AccessLogEntry.Request request = 3;
-    AccessLogEntry.Response response = 4;
-    AccessLogEntry.Internal internal = 5;
-  }
+message InsertAccessLogParameters {
 
   string severity = 1;
   google.protobuf.Timestamp timestamp = 2;
-  Variables variables = 3;
+  AccessLogEntry.Variables variables = 3;
   string monitoredResourceType = 4;
   string monitoredResourceDimensions = 5;
 }

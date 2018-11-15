@@ -21,7 +21,7 @@ number_of_entries: 34
 </code></pre>
 <p>InsertProfile inserts a newly created profile into the Platform database.</p>
 
-<pre id="Controller-InsertAccessLog"><code class="language-proto">rpc InsertAccessLog(AccessLogEntryParameters) returns (AccessLogResult)
+<pre id="Controller-InsertAccessLog"><code class="language-proto">rpc InsertAccessLog(InsertAccessLogParameters) returns (InsertAccessLogResult)
 </code></pre>
 </section>
 <h2 id="Types">Types</h2>
@@ -469,7 +469,7 @@ number_of_entries: 34
 </tbody>
 </table>
 </section>
-<h3 id="AccessLogEntryParameters">AccessLogEntryParameters</h3>
+<h3 id="AccessLogEntry-Variables">AccessLogEntry.Variables</h3>
 <section>
 <table class="message-fields">
 <thead>
@@ -480,103 +480,33 @@ number_of_entries: 34
 </tr>
 </thead>
 <tbody>
-<tr id="AccessLogEntryParameters-severity">
-<td><code>severity</code></td>
-<td><code>string</code></td>
-<td>
-</td>
-</tr>
-<tr id="AccessLogEntryParameters-timestamp">
-<td><code>timestamp</code></td>
-<td><code><a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#timestamp">google.protobuf.Timestamp</a></code></td>
-<td>
-</td>
-</tr>
-<tr id="AccessLogEntryParameters-variables">
-<td><code>variables</code></td>
-<td><code><a href="#AccessLogEntryParameters-Variables">AccessLogEntryParameters.Variables</a></code></td>
-<td>
-</td>
-</tr>
-<tr id="AccessLogEntryParameters-monitoredResourceType">
-<td><code>monitoredResourceType</code></td>
-<td><code>string</code></td>
-<td>
-</td>
-</tr>
-<tr id="AccessLogEntryParameters-monitoredResourceDimensions">
-<td><code>monitoredResourceDimensions</code></td>
-<td><code>string</code></td>
-<td>
-</td>
-</tr>
-</tbody>
-</table>
-</section>
-<h3 id="AccessLogEntryParameters-Variables">AccessLogEntryParameters.Variables</h3>
-<section>
-<table class="message-fields">
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr id="AccessLogEntryParameters-Variables-source">
+<tr id="AccessLogEntry-Variables-source">
 <td><code>source</code></td>
 <td><code><a href="#AccessLogEntry-Source">AccessLogEntry.Source</a></code></td>
 <td>
 </td>
 </tr>
-<tr id="AccessLogEntryParameters-Variables-destination">
+<tr id="AccessLogEntry-Variables-destination">
 <td><code>destination</code></td>
 <td><code><a href="#AccessLogEntry-Destination">AccessLogEntry.Destination</a></code></td>
 <td>
 </td>
 </tr>
-<tr id="AccessLogEntryParameters-Variables-request">
+<tr id="AccessLogEntry-Variables-request">
 <td><code>request</code></td>
 <td><code><a href="#AccessLogEntry-Request">AccessLogEntry.Request</a></code></td>
 <td>
 </td>
 </tr>
-<tr id="AccessLogEntryParameters-Variables-response">
+<tr id="AccessLogEntry-Variables-response">
 <td><code>response</code></td>
 <td><code><a href="#AccessLogEntry-Response">AccessLogEntry.Response</a></code></td>
 <td>
 </td>
 </tr>
-<tr id="AccessLogEntryParameters-Variables-internal">
+<tr id="AccessLogEntry-Variables-internal">
 <td><code>internal</code></td>
 <td><code><a href="#AccessLogEntry-Internal">AccessLogEntry.Internal</a></code></td>
-<td>
-</td>
-</tr>
-</tbody>
-</table>
-</section>
-<h3 id="AccessLogResult">AccessLogResult</h3>
-<section>
-<table class="message-fields">
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr id="AccessLogResult-status">
-<td><code>status</code></td>
-<td><code>int32</code></td>
-<td>
-</td>
-</tr>
-<tr id="AccessLogResult-message">
-<td><code>message</code></td>
-<td><code>string</code></td>
 <td>
 </td>
 </tr>
@@ -901,6 +831,76 @@ number_of_entries: 34
 <tbody>
 <tr id="Credentials-Username-as_string">
 <td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="InsertAccessLogParameters">InsertAccessLogParameters</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="InsertAccessLogParameters-severity">
+<td><code>severity</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="InsertAccessLogParameters-timestamp">
+<td><code>timestamp</code></td>
+<td><code><a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#timestamp">google.protobuf.Timestamp</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="InsertAccessLogParameters-variables">
+<td><code>variables</code></td>
+<td><code><a href="#AccessLogEntry-Variables">AccessLogEntry.Variables</a></code></td>
+<td>
+</td>
+</tr>
+<tr id="InsertAccessLogParameters-monitoredResourceType">
+<td><code>monitoredResourceType</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+<tr id="InsertAccessLogParameters-monitoredResourceDimensions">
+<td><code>monitoredResourceDimensions</code></td>
+<td><code>string</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="InsertAccessLogResult">InsertAccessLogResult</h3>
+<section>
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="InsertAccessLogResult-status">
+<td><code>status</code></td>
+<td><code>int32</code></td>
+<td>
+</td>
+</tr>
+<tr id="InsertAccessLogResult-message">
+<td><code>message</code></td>
 <td><code>string</code></td>
 <td>
 </td>

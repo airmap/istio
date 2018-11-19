@@ -25,6 +25,7 @@ import (
 	"istio.io/istio/mixer/adapter/airmap/config"
 	"istio.io/istio/mixer/pkg/adapter"
 	"istio.io/istio/mixer/template/authorization"
+	"istio.io/istio/mixer/template/logentry"
 )
 
 const (
@@ -44,6 +45,7 @@ var (
 
 type handler struct {
 	controller access.ControllerClient
+	monitor    access.MonitorClient
 }
 
 func defaultParam() *config.Params {
@@ -156,6 +158,88 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 	}, nil
 }
 
+func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Instance) error {
+	stream, err := h.monitor.MonitorAccess(ctxt)
+	if err != nil {
+		return err
+	}
+
+	for _, instance := range instances {
+		ts, err := types.TimestampProto(instance.Timestamp)
+		if err != nil {
+			ts = types.TimestampNow()
+		}
+
+		l := access.Log{
+			Request: &access.Log_Request{
+				Subject: &access.Log_Request_Subject{},
+				Action:  &access.Log_Request_Action{},
+			},
+			Response:  &access.Log_Response{},
+			Timestamp: ts,
+		}
+
+		if v, ok := instance.Variables["sourceIp"].([]byte); ok {
+			l.Request.Subject.Ip = &access.Source_IP{
+				AsBytes: v,
+			}
+		}
+
+		if v, ok := instance.Variables["apiKey"].(string); ok {
+			l.Request.Subject.Key = &access.API_Key{
+				AsString: v,
+			}
+		}
+
+		if v, ok := instance.Variables["userAgent"].(string); ok {
+			l.Request.Subject.UserAgent = &access.Source_UserAgent{
+				AsString: v,
+			}
+		}
+
+		if v, ok := instance.Variables["destinationName"].(string); ok {
+			l.Request.Action.Name = &access.API_Name{
+				AsString: v,
+			}
+		}
+
+		if v, ok := instance.Variables["destinationNamespace"].(string); ok {
+			l.Request.Action.Namespace = &access.API_Namespace{
+				AsString: v,
+			}
+		}
+
+		if v, ok := instance.Variables["method"].(string); ok {
+			l.Request.Action.Method = &access.API_Method{
+				AsString: v,
+			}
+		}
+
+		if v, ok := instance.Variables["url"].(string); ok {
+			l.Request.Action.Resource = &access.API_Resource{
+				AsString: v,
+			}
+		}
+
+		if v, ok := instance.Variables["responseCode"].(int64); ok {
+			l.Response.Code = &access.Log_Response_Code{
+				AsInt64: v,
+			}
+		}
+
+		// The response message is left empty for now as we are focusing on calls to our
+		// ReST APIs for now.
+
+		// We deliver the individual entry via our stream, logging but otherwise ignoring the error.
+		// The error handling policy focuses on being as robust and fault-tolerant as possible.
+		if err := stream.Send(&l); err != nil {
+			log.Error("failed to stream log entry", zap.Error(err))
+		}
+	}
+
+	return nil
+}
+
 func (h *handler) Close() error {
 	return nil
 }
@@ -168,6 +252,7 @@ func GetInfo() adapter.Info {
 		Description: "Dispatches to an in-cluster adapter via ReST",
 		SupportedTemplates: []string{
 			authorization.TemplateName,
+			logentry.TemplateName,
 		},
 		DefaultConfig: defaultParam(),
 		NewBuilder: func() adapter.HandlerBuilder {
@@ -186,6 +271,7 @@ func GetInfo() adapter.Info {
 }
 
 var _ authorization.HandlerBuilder = &builder{}
+var _ logentry.HandlerBuilder = &builder{}
 
 type builder struct {
 	adapterConfig *config.Params
@@ -195,6 +281,7 @@ type builder struct {
 }
 
 func (*builder) SetAuthorizationTypes(map[string]*authorization.Type) {}
+func (*builder) SetLogEntryTypes(map[string]*logentry.Type)           {}
 
 func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 	b.guard.Lock()
@@ -236,5 +323,6 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 
 	return &handler{
 		controller: access.NewControllerClient(b.conn),
+		monitor:    access.NewMonitorClient(b.conn),
 	}, nil
 }

@@ -2,7 +2,7 @@
 title: access
 layout: protoc-gen-docs
 generator: protoc-gen-docs
-number_of_entries: 25
+number_of_entries: 37
 ---
 <h2 id="Services">Services</h2>
 <h3 id="Controller">Controller</h3>
@@ -20,6 +20,15 @@ number_of_entries: 25
 <pre id="Controller-InsertProfile"><code class="language-proto">rpc InsertProfile(InsertProfileParameters) returns (InsertProfileResult)
 </code></pre>
 <p>InsertProfile inserts a newly created profile into the Platform database.</p>
+
+</section>
+<h3 id="Monitor">Monitor</h3>
+<section>
+<p>Monitor models an entity that monitors access to API resources.</p>
+
+<pre id="Monitor-MonitorAccess"><code class="language-proto">rpc MonitorAccess(Log) returns (MonitorAccessResult)
+</code></pre>
+<p>MonitorAccess starts streaming of logging of access requests.</p>
 
 </section>
 <h2 id="Types">Types</h2>
@@ -522,6 +531,259 @@ number_of_entries: 25
 <p>InsertProfileResult bundles up the result of calls to Controller.InsertProfile</p>
 
 </section>
+<h3 id="Log">Log</h3>
+<section>
+<p>Log describes an individual access request.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-request">
+<td><code>request</code></td>
+<td><code><a href="#Log-Request">Log.Request</a></code></td>
+<td>
+<p>Summary of the request.</p>
+
+</td>
+</tr>
+<tr id="Log-response">
+<td><code>response</code></td>
+<td><code><a href="#Log-Response">Log.Response</a></code></td>
+<td>
+<p>Summary of the response.</p>
+
+</td>
+</tr>
+<tr id="Log-timestamp">
+<td><code>timestamp</code></td>
+<td><code><a href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#timestamp">google.protobuf.Timestamp</a></code></td>
+<td>
+<p>Timestamp of the request.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Log-Request">Log.Request</h3>
+<section>
+<p>Request summarizes an individual request.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-Request-subject">
+<td><code>subject</code></td>
+<td><code><a href="#Log-Request-Subject">Log.Request.Subject</a></code></td>
+<td>
+<p>The subject of the request.</p>
+
+</td>
+</tr>
+<tr id="Log-Request-action">
+<td><code>action</code></td>
+<td><code><a href="#Log-Request-Action">Log.Request.Action</a></code></td>
+<td>
+<p>The requested action.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Log-Request-Action">Log.Request.Action</h3>
+<section>
+<p>Action describes what a subject is trying to access.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-Request-Action-namespace">
+<td><code>namespace</code></td>
+<td><code><a href="#API-Namespace">API.Namespace</a></code></td>
+<td>
+<p>The namespace that the API lives in.</p>
+
+</td>
+</tr>
+<tr id="Log-Request-Action-name">
+<td><code>name</code></td>
+<td><code><a href="#API-Name">API.Name</a></code></td>
+<td>
+<p>The name of the API that is accessed.</p>
+
+</td>
+</tr>
+<tr id="Log-Request-Action-version">
+<td><code>version</code></td>
+<td><code><a href="#API-Version">API.Version</a></code></td>
+<td>
+<p>The version of the API that is accessed.</p>
+
+</td>
+</tr>
+<tr id="Log-Request-Action-method">
+<td><code>method</code></td>
+<td><code><a href="#API-Method">API.Method</a></code></td>
+<td>
+<p>The concrete access method.</p>
+
+</td>
+</tr>
+<tr id="Log-Request-Action-resource">
+<td><code>resource</code></td>
+<td><code><a href="#API-Resource">API.Resource</a></code></td>
+<td>
+<p>The specific resource that is accessed within the API.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Log-Request-Subject">Log.Request.Subject</h3>
+<section>
+<p>Subject describes who issued a request.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-Request-Subject-ip">
+<td><code>ip</code></td>
+<td><code><a href="#Source-IP">Source.IP</a></code></td>
+<td>
+<p>The source IP of the request.</p>
+
+</td>
+</tr>
+<tr id="Log-Request-Subject-key">
+<td><code>key</code></td>
+<td><code><a href="#API-Key">API.Key</a></code></td>
+<td>
+<p>The key accompanying the request.</p>
+
+</td>
+</tr>
+<tr id="Log-Request-Subject-user_agent">
+<td><code>userAgent</code></td>
+<td><code><a href="#Source-UserAgent">Source.UserAgent</a></code></td>
+<td>
+<p>The user agent that issued the request.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Log-Response">Log.Response</h3>
+<section>
+<p>Response summarizes a response to an individual request.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-Response-code">
+<td><code>code</code></td>
+<td><code><a href="#Log-Response-Code">Log.Response.Code</a></code></td>
+<td>
+<p>The response code.</p>
+
+</td>
+</tr>
+<tr id="Log-Response-message">
+<td><code>message</code></td>
+<td><code><a href="#Log-Response-Message">Log.Response.Message</a></code></td>
+<td>
+<p>The response message.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Log-Response-Code">Log.Response.Code</h3>
+<section>
+<p>Code describing the status of a response.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-Response-Code-as_int64">
+<td><code>asInt64</code></td>
+<td><code>int64</code></td>
+<td>
+<p>The numeric value of the response code.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Log-Response-Message">Log.Response.Message</h3>
+<section>
+<p>Message models a human-readable message providing further details about the response.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-Response-Message-as_string">
+<td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
+<p>The textual message coming along with the response.</p>
+
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="MonitorAccessResult">MonitorAccessResult</h3>
+<section>
+<p>MonitorAccessResult models the result of a single call to MonitorAccess.</p>
+
+</section>
 <h3 id="Raw">Raw</h3>
 <section>
 <p>Raw bundles up raw values for post-processing in the adapter.</p>
@@ -565,6 +827,55 @@ number_of_entries: 25
 <td>
 <p>Its string value.</p>
 
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Source">Source</h3>
+<section>
+<p>Source bundles up types describing attributes of the source of a request.</p>
+
+</section>
+<h3 id="Source-IP">Source.IP</h3>
+<section>
+<p>IP describes the ip of the source of a request.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Source-IP-as_bytes">
+<td><code>asBytes</code></td>
+<td><code>bytes</code></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Source-UserAgent">Source.UserAgent</h3>
+<section>
+<p>UserAgent describes a user agent.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Source-UserAgent-as_string">
+<td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
 </td>
 </tr>
 </tbody>

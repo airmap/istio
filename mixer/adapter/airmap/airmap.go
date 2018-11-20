@@ -164,6 +164,8 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 		return err
 	}
 
+	defer stream.CloseSend()
+
 	for _, instance := range instances {
 		ts, err := types.TimestampProto(instance.Timestamp)
 		if err != nil {
@@ -227,11 +229,12 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 			}
 		}
 
-		// The response message is left empty for now as we are focusing on calls to our
-		// ReST APIs for now.
+		// The response message is left empty for now as we are focusing on
+		// calls to our ReST APIs.
 
-		// We deliver the individual entry via our stream, logging but otherwise ignoring the error.
-		// The error handling policy focuses on being as robust and fault-tolerant as possible.
+		// We deliver the individual entry via our stream, logging but otherwise
+		// ignoring the error. The error handling policy focuses on being as
+		// robust and fault-tolerant as possible.
 		if err := stream.Send(&l); err != nil {
 			log.Error("failed to stream log entry", zap.Error(err))
 		}

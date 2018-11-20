@@ -35,6 +35,27 @@ const (
 )
 
 var (
+	defaultValues struct {
+		subject struct {
+			ip        *access.Source_IP
+			key       *access.API_Key
+			userAgent *access.Source_UserAgent
+		}
+
+		action struct {
+			namespace *access.API_Namespace
+			name      *access.API_Name
+			version   *access.API_Version
+			method    *access.API_Method
+			resource  *access.API_Resource
+		}
+
+		response struct {
+			code    *access.Log_Response_Code
+			message *access.Log_Response_Message
+		}
+	}
+
 	statusCodeLut = map[access.Code]rpc.Code{
 		access.CodeOK:            rpc.OK,
 		access.CodeForbidden:     rpc.PERMISSION_DENIED,
@@ -42,6 +63,40 @@ var (
 		access.CodeQuotaExceeded: rpc.RESOURCE_EXHAUSTED,
 	}
 )
+
+func init() {
+	defaultValues.subject.ip = &access.Source_IP{
+		AsBytes: []byte{255, 255, 255, 255},
+	}
+	defaultValues.subject.key = &access.API_Key{
+		AsString: "unknown",
+	}
+	defaultValues.subject.userAgent = &access.Source_UserAgent{
+		AsString: "unknown",
+	}
+	defaultValues.action.namespace = &access.API_Namespace{
+		AsString: "unknown",
+	}
+	defaultValues.action.name = &access.API_Name{
+		AsString: "unknown",
+	}
+	defaultValues.action.version = &access.API_Version{
+		AsString: "unknown",
+	}
+	defaultValues.action.method = &access.API_Method{
+		AsString: "unknown",
+	}
+	defaultValues.action.resource = &access.API_Resource{
+		AsString: "unknown",
+	}
+
+	defaultValues.response.code = &access.Log_Response_Code{
+		AsInt64: -1,
+	}
+	defaultValues.response.message = &access.Log_Response_Message{
+		AsString: "unknown",
+	}
+}
 
 type handler struct {
 	controller access.ControllerClient
@@ -174,10 +229,23 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 
 		l := access.Log{
 			Request: &access.Log_Request{
-				Subject: &access.Log_Request_Subject{},
-				Action:  &access.Log_Request_Action{},
+				Subject: &access.Log_Request_Subject{
+					Ip:        defaultValues.subject.ip,
+					Key:       defaultValues.subject.key,
+					UserAgent: defaultValues.subject.userAgent,
+				},
+				Action: &access.Log_Request_Action{
+					Namespace: defaultValues.action.namespace,
+					Name:      defaultValues.action.name,
+					Version:   defaultValues.action.version,
+					Method:    defaultValues.action.method,
+					Resource:  defaultValues.action.resource,
+				},
 			},
-			Response:  &access.Log_Response{},
+			Response: &access.Log_Response{
+				Code:    defaultValues.response.code,
+				Message: defaultValues.response.message,
+			},
 			Timestamp: ts,
 		}
 

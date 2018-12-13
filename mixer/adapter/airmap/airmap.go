@@ -9,6 +9,7 @@ package airmap
 import (
 	"context"
 	"errors"
+	"io"
 	"net/url"
 	"sync"
 	"time"
@@ -219,8 +220,6 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 		return err
 	}
 
-	defer stream.CloseSend()
-
 	for _, instance := range instances {
 		ts, err := types.TimestampProto(instance.Timestamp)
 		if err != nil {
@@ -308,7 +307,16 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 		}
 	}
 
-	return nil
+	_, err = stream.CloseAndRecv()
+	switch err {
+	case nil:
+		return errFailedClosingStream
+	case io.EOF:
+		return nil
+	default:
+		return err
+	}
+
 }
 
 func (h *handler) Close() error {

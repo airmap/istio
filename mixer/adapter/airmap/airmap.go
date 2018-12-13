@@ -63,6 +63,8 @@ var (
 		access.CodeUnauthorized:  rpc.UNAUTHENTICATED,
 		access.CodeQuotaExceeded: rpc.RESOURCE_EXHAUSTED,
 	}
+
+	errFailedClosingStream = errors.New("failed to close log access stream")
 )
 
 func init() {

@@ -122,8 +122,6 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 		if s := u.Query().Get("apikey"); len(s) > 0 {
 			instance.Subject.Properties[keyAPIKey] = s
 		}
-
-		instance.Action.Path = u.Path
 	}
 
 	params := access.AuthorizeAccessParameters{

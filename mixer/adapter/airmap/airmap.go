@@ -190,14 +190,34 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 	defer cancel()
 
 	result, err := h.controller.AuthorizeAccess(ctxt, &params)
-	if err != nil {
+	switch err {
+	case nil:
+		// Empty on purpose
+	case context.Canceled:
 		return adapter.CheckResult{
 			Status: rpc.Status{
-				Code: int32(rpc.INTERNAL),
+				Code: int32(rpc.CANCELLED),
 			},
 			ValidDuration: defaultValidDuration,
 			ValidUseCount: 1,
-		}, err
+		}, nil
+	case context.DeadlineExceeded:
+		return adapter.CheckResult{
+			Status: rpc.Status{
+				Code: int32(rpc.DEADLINE_EXCEEDED),
+			},
+			ValidDuration: defaultValidDuration,
+			ValidUseCount: 1,
+		}, nil
+	default:
+		return adapter.CheckResult{
+			Status: rpc.Status{
+				Code:    int32(rpc.INTERNAL),
+				Message: err.Error(),
+			},
+			ValidDuration: defaultValidDuration,
+			ValidUseCount: 1,
+		}, nil
 	}
 
 	duration := defaultValidDuration

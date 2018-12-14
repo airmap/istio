@@ -11,6 +11,7 @@ import (
 	"errors"
 	"io"
 	"net/url"
+	"path"
 	"sync"
 	"time"
 
@@ -111,6 +112,8 @@ func defaultParam() *config.Params {
 }
 
 func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorization.Instance) (adapter.CheckResult, error) {
+	instance.Action.Path = path.Clean(instance.Action.Path)
+
 	if u, err := url.Parse(instance.Action.Path); err == nil {
 		// Handling the case of tiledata here: The api key comes in via a query parameter
 		// named 'apikey' and envoy only extracts api keys from query parameters with keys:

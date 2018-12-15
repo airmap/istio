@@ -112,18 +112,6 @@ func defaultParam() *config.Params {
 }
 
 func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorization.Instance) (adapter.CheckResult, error) {
-	instance.Action.Path = path.Clean(instance.Action.Path)
-
-	if u, err := url.Parse(instance.Action.Path); err == nil {
-		// Handling the case of tiledata here: The api key comes in via a query parameter
-		// named 'apikey' and envoy only extracts api keys from query parameters with keys:
-		//   key
-		//   api_key
-		if s := u.Query().Get("apikey"); len(s) > 0 {
-			instance.Subject.Properties[keyAPIKey] = s
-		}
-	}
-
 	params := access.AuthorizeAccessParameters{
 		Subject: &access.AuthorizeAccessParameters_Subject{
 			Credentials: &access.Credentials{
@@ -167,6 +155,18 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 		}
 	}
 
+	if u, err := url.Parse(instance.Action.Path); err == nil {
+		// Handling the case of tiledata here: The api key comes in via a query parameter
+		// named 'apikey' and envoy only extracts api keys from query parameters with keys:
+		//   key
+		//   api_key
+		if s := u.Query().Get("apikey"); len(s) > 0 {
+			params.Subject.Key = &access.API_Key{
+				AsString: s,
+			}
+		}
+	}
+
 	if v, present := instance.Action.Properties[keyVersion]; present {
 		if s, ok := v.(string); ok {
 			params.Action.Version = &access.API_Version{
@@ -177,7 +177,7 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 
 	if len(instance.Action.Path) > 0 {
 		params.Action.Resource = &access.API_Resource{
-			AsString: instance.Action.Path,
+			AsString: path.Clean(instance.Action.Path),
 		}
 	}
 

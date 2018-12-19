@@ -124,9 +124,10 @@ message Log {
   message Request {
     // Subject describes who issued a request.
     message Subject {
-      Source.IP ip                = 1;  // The source IP of the request.
-      API.Key key                 = 2;  // The key accompanying the request.
-      Source.UserAgent user_agent = 3;  // The user agent that issued the request.
+      Source.IP ip                    = 1;  // The source IP of the request.
+      Raw.Authorization authorization = 2;  // The raw authorization value, typically a bearer token.
+      API.Key key                     = 3;  // The key accompanying the request.
+      Source.UserAgent user_agent     = 4;  // The user agent that issued the request.
     }
 
     // Action describes what a subject is trying to access.

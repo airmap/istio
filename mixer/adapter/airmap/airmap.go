@@ -283,6 +283,12 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 			}
 		}
 
+		if v, ok := instance.Variables["authorization"].(string); ok {
+			l.Request.Subject.Authorization = &access.Raw_Authorization{
+				AsString: v,
+			}
+		}
+
 		if v, ok := instance.Variables["userAgent"].(string); ok {
 			l.Request.Subject.UserAgent = &access.Source_UserAgent{
 				AsString: v,

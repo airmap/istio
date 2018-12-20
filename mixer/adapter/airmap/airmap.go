@@ -15,6 +15,8 @@ import (
 	"sync"
 	"time"
 
+	"istio.io/istio/mixer/pkg/status"
+
 	"go.uber.org/zap"
 	"istio.io/istio/pkg/log"
 
@@ -33,6 +35,7 @@ import (
 const (
 	keyAPIKey            = "api-key"
 	keyVersion           = "version"
+	defaultValidCount    = 1
 	defaultValidDuration = 5 * time.Second
 )
 
@@ -188,42 +191,25 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 	defer cancel()
 
 	result, err := h.controller.AuthorizeAccess(ctxt, &params)
-	switch err {
-	case nil:
-		// Empty on purpose
-	case context.Canceled:
+	if err != nil {
 		return adapter.CheckResult{
-			Status: rpc.Status{
-				Code: int32(rpc.CANCELLED),
-			},
-			ValidDuration: defaultValidDuration,
-			ValidUseCount: 1,
-		}, nil
-	case context.DeadlineExceeded:
-		return adapter.CheckResult{
-			Status: rpc.Status{
-				Code: int32(rpc.DEADLINE_EXCEEDED),
-			},
-			ValidDuration: defaultValidDuration,
-			ValidUseCount: 1,
-		}, nil
-	default:
-		return adapter.CheckResult{
-			Status: rpc.Status{
-				Code:    int32(rpc.INTERNAL),
-				Message: err.Error(),
-			},
-			ValidDuration: defaultValidDuration,
-			ValidUseCount: 1,
-		}, nil
+			Status: status.WithPermissionDenied(err.Error()),
+		}, err
 	}
 
-	duration := defaultValidDuration
+	var (
+		duration       = defaultValidDuration
+		count    int32 = defaultValidCount
+	)
 
 	if result.Validity != nil {
 		duration, err = types.DurationFromProto(result.Validity.Duration)
 		if err != nil {
 			duration = defaultValidDuration
+		}
+
+		if count = int32(result.Validity.Count); count < 0 {
+			count = 0
 		}
 	}
 
@@ -233,7 +219,7 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 			Message: result.Status.Message,
 		},
 		ValidDuration: duration,
-		ValidUseCount: int32(result.Validity.Count),
+		ValidUseCount: count,
 	}, nil
 }
 

@@ -10,7 +10,6 @@ import (
 	"context"
 	"errors"
 	"io"
-	"math"
 	"net/url"
 	"path"
 	"sync"
@@ -36,7 +35,7 @@ import (
 const (
 	keyAPIKey            = "api-key"
 	keyVersion           = "version"
-	defaultValidCount    = math.MaxInt32
+	defaultValidCount    = 1
 	defaultValidDuration = 5 * time.Second
 )
 

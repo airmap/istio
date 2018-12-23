@@ -10,12 +10,11 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net"
 	"net/url"
 	"path"
 	"sync"
 	"time"
-
-	"istio.io/api/policy/v1beta1"
 
 	"istio.io/istio/mixer/pkg/status"
 
@@ -260,9 +259,9 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 		}
 
 		if v, ok := instance.Variables["sourceIp"]; ok {
-			if ip, ok := v.(*v1beta1.IPAddress); ok {
+			if ip, ok := v.(net.IP); ok {
 				l.Request.Subject.Ip = &access.Source_IP{
-					AsBytes: ip.Value,
+					AsBytes: ip,
 				}
 			} else {
 				log.Errorf("failed to type cast IP address: %T", v)

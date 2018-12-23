@@ -15,6 +15,8 @@ import (
 	"sync"
 	"time"
 
+	"istio.io/api/policy/v1beta1"
+
 	"istio.io/istio/mixer/pkg/status"
 
 	"go.uber.org/zap"
@@ -257,9 +259,9 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 			Timestamp: ts,
 		}
 
-		if v, ok := instance.Variables["sourceIp"].([]byte); ok {
+		if v, ok := instance.Variables["sourceIp"].(*v1beta1.IPAddress); ok {
 			l.Request.Subject.Ip = &access.Source_IP{
-				AsBytes: v,
+				AsBytes: v.Value,
 			}
 		}
 

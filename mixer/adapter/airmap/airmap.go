@@ -259,10 +259,16 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 			Timestamp: ts,
 		}
 
-		if v, ok := instance.Variables["sourceIp"].(*v1beta1.IPAddress); ok {
-			l.Request.Subject.Ip = &access.Source_IP{
-				AsBytes: v.Value,
+		if v, ok := instance.Variables["sourceIp"]; ok {
+			if ip, ok := v.(*v1beta1.IPAddress); ok {
+				l.Request.Subject.Ip = &access.Source_IP{
+					AsBytes: ip.Value,
+				}
+			} else {
+				log.Errorf("failed to type cast IP address: %T", v)
 			}
+		} else {
+			log.Error("missing variable in logentry", zap.String("key", "sourceIp"))
 		}
 
 		if v, ok := instance.Variables["apiKey"].(string); ok {

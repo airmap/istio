@@ -12,5 +12,6 @@ option go_package="config";
 
 // Configuration format for the AirMap adapter.
 message Params {
-    string endpoint = 1; // The endpoint implementing access.Controller
+    string controller = 1;  // The endpoint implementing access.Controller
+    string monitor    = 2;  // The endpoint implementing access.Monitor
 }

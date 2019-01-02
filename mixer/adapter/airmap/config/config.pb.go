@@ -2,15 +2,15 @@
 // source: mixer/adapter/airmap/config/config.proto
 
 /*
-Package config is a generated protocol buffer package.
+	Package config is a generated protocol buffer package.
 
-The `airmap` adapter is designed to bridge over to an in-cluster adapter instance via ReST.
+	The `airmap` adapter is designed to bridge over to an in-cluster adapter instance via ReST.
 
-It is generated from these files:
-	mixer/adapter/airmap/config/config.proto
+	It is generated from these files:
+		mixer/adapter/airmap/config/config.proto
 
-It has these top-level messages:
-	Params
+	It has these top-level messages:
+		Params
 */
 package config
 
@@ -36,16 +36,24 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // Configuration format for the AirMap adapter.
 type Params struct {
-	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Controller string `protobuf:"bytes,1,opt,name=controller,proto3" json:"controller,omitempty"`
+	Monitor    string `protobuf:"bytes,2,opt,name=monitor,proto3" json:"monitor,omitempty"`
 }
 
 func (m *Params) Reset()                    { *m = Params{} }
 func (*Params) ProtoMessage()               {}
 func (*Params) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{0} }
 
-func (m *Params) GetEndpoint() string {
+func (m *Params) GetController() string {
 	if m != nil {
-		return m.Endpoint
+		return m.Controller
+	}
+	return ""
+}
+
+func (m *Params) GetMonitor() string {
+	if m != nil {
+		return m.Monitor
 	}
 	return ""
 }
@@ -55,10 +63,7 @@ func init() {
 }
 func (this *Params) Equal(that interface{}) bool {
 	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
+		return this == nil
 	}
 
 	that1, ok := that.(*Params)
@@ -71,14 +76,14 @@ func (this *Params) Equal(that interface{}) bool {
 		}
 	}
 	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
+		return this == nil
 	} else if this == nil {
 		return false
 	}
-	if this.Endpoint != that1.Endpoint {
+	if this.Controller != that1.Controller {
+		return false
+	}
+	if this.Monitor != that1.Monitor {
 		return false
 	}
 	return true
@@ -87,9 +92,10 @@ func (this *Params) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 5)
+	s := make([]string, 0, 6)
 	s = append(s, "&config.Params{")
-	s = append(s, "Endpoint: "+fmt.Sprintf("%#v", this.Endpoint)+",\n")
+	s = append(s, "Controller: "+fmt.Sprintf("%#v", this.Controller)+",\n")
+	s = append(s, "Monitor: "+fmt.Sprintf("%#v", this.Monitor)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -116,11 +122,17 @@ func (m *Params) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Endpoint) > 0 {
+	if len(m.Controller) > 0 {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.Endpoint)))
-		i += copy(dAtA[i:], m.Endpoint)
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.Controller)))
+		i += copy(dAtA[i:], m.Controller)
+	}
+	if len(m.Monitor) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.Monitor)))
+		i += copy(dAtA[i:], m.Monitor)
 	}
 	return i, nil
 }
@@ -137,7 +149,11 @@ func encodeVarintConfig(dAtA []byte, offset int, v uint64) int {
 func (m *Params) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Endpoint)
+	l = len(m.Controller)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	l = len(m.Monitor)
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
 	}
@@ -162,7 +178,8 @@ func (this *Params) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&Params{`,
-		`Endpoint:` + fmt.Sprintf("%v", this.Endpoint) + `,`,
+		`Controller:` + fmt.Sprintf("%v", this.Controller) + `,`,
+		`Monitor:` + fmt.Sprintf("%v", this.Monitor) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -206,7 +223,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Endpoint", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Controller", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -231,7 +248,36 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Endpoint = string(dAtA[iNdEx:postIndex])
+			m.Controller = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Monitor", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Monitor = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -362,15 +408,16 @@ var (
 func init() { proto.RegisterFile("mixer/adapter/airmap/config/config.proto", fileDescriptorConfig) }
 
 var fileDescriptorConfig = []byte{
-	// 157 bytes of a gzipped FileDescriptorProto
+	// 176 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0xc8, 0xcd, 0xac, 0x48,
 	0x2d, 0xd2, 0x4f, 0x4c, 0x49, 0x2c, 0x28, 0x01, 0xd1, 0x99, 0x45, 0xb9, 0x89, 0x05, 0xfa, 0xc9,
 	0xf9, 0x79, 0x69, 0x99, 0xe9, 0x50, 0x4a, 0xaf, 0xa0, 0x28, 0xbf, 0x24, 0x5f, 0x48, 0x14, 0xaa,
-	0x46, 0x0f, 0xa2, 0x46, 0x0f, 0x22, 0xa9, 0xa4, 0xc2, 0xc5, 0x16, 0x90, 0x58, 0x94, 0x98, 0x5b,
-	0x2c, 0x24, 0xc5, 0xc5, 0x91, 0x9a, 0x97, 0x52, 0x90, 0x9f, 0x99, 0x57, 0x22, 0xc1, 0xa8, 0xc0,
-	0xa8, 0xc1, 0x19, 0x04, 0xe7, 0x3b, 0x99, 0x5c, 0x78, 0x28, 0xc7, 0x70, 0xe3, 0xa1, 0x1c, 0xc3,
-	0x87, 0x87, 0x72, 0x8c, 0x0d, 0x8f, 0xe4, 0x18, 0x57, 0x3c, 0x92, 0x63, 0x3c, 0xf1, 0x48, 0x8e,
-	0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x5f, 0x3c, 0x92, 0x63, 0xf8, 0xf0, 0x48,
-	0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86, 0x28, 0x36, 0x88, 0xd9, 0x49, 0x6c, 0x60, 0x9b, 0x8d, 0x01,
-	0x01, 0x00, 0x00, 0xff, 0xff, 0xf8, 0xd3, 0x51, 0xb2, 0xa5, 0x00, 0x00, 0x00,
+	0x46, 0x0f, 0xa2, 0x46, 0x0f, 0x22, 0xa9, 0xe4, 0xc4, 0xc5, 0x16, 0x90, 0x58, 0x94, 0x98, 0x5b,
+	0x2c, 0x24, 0xc7, 0xc5, 0x95, 0x9c, 0x9f, 0x57, 0x52, 0x94, 0x9f, 0x93, 0x93, 0x5a, 0x24, 0xc1,
+	0xa8, 0xc0, 0xa8, 0xc1, 0x19, 0x84, 0x24, 0x22, 0x24, 0xc1, 0xc5, 0x9e, 0x9b, 0x9f, 0x97, 0x59,
+	0x92, 0x5f, 0x24, 0xc1, 0x04, 0x96, 0x84, 0x71, 0x9d, 0x4c, 0x2e, 0x3c, 0x94, 0x63, 0xb8, 0xf1,
+	0x50, 0x8e, 0xe1, 0xc3, 0x43, 0x39, 0xc6, 0x86, 0x47, 0x72, 0x8c, 0x2b, 0x1e, 0xc9, 0x31, 0x9e,
+	0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x2f, 0x1e, 0xc9, 0x31,
+	0x7c, 0x78, 0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0x43, 0x14, 0x1b, 0xc4, 0xe6, 0x24, 0x36, 0xb0,
+	0xbb, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x7d, 0x34, 0x68, 0xcf, 0xc3, 0x00, 0x00, 0x00,
 }

@@ -366,7 +366,7 @@ func GetInfo() adapter.Info {
 		DefaultConfig: defaultParam(),
 		NewBuilder: func() adapter.HandlerBuilder {
 			balancer := grpc.Balancer(nil)
-			resolver, err := naming.NewDNSResolver()
+			resolver, err := naming.NewDNSResolverWithFreq(30 * time.Second)
 			if err != nil {
 				log.Error("failed to instantiate naming resolver", zap.Error(err))
 			} else {
@@ -383,10 +383,11 @@ var _ authorization.HandlerBuilder = &builder{}
 var _ logentry.HandlerBuilder = &builder{}
 
 type builder struct {
-	adapterConfig *config.Params
-	balancer      grpc.Balancer
-	conn          *grpc.ClientConn
-	guard         sync.Mutex
+	adapterConfig  *config.Params
+	balancer       grpc.Balancer
+	controllerConn *grpc.ClientConn
+	monitorConn    *grpc.ClientConn
+	guard          sync.Mutex
 }
 
 func (*builder) SetAuthorizationTypes(map[string]*authorization.Type) {}
@@ -396,8 +397,12 @@ func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 	b.guard.Lock()
 	defer b.guard.Unlock()
 
-	if b.conn != nil {
-		_ = b.conn.Close()
+	if b.controllerConn != nil {
+		_ = b.controllerConn.Close()
+	}
+
+	if b.monitorConn != nil {
+		_ = b.monitorConn.Close()
 	}
 
 	if b.adapterConfig = cfg.(*config.Params); b.adapterConfig != nil {
@@ -409,11 +414,18 @@ func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 			options = append(options, grpc.WithBalancer(b.balancer))
 		}
 
-		cc, err := grpc.Dial(b.adapterConfig.Endpoint, options...)
+		cc, err := grpc.Dial(b.adapterConfig.Controller, options...)
 		if err != nil {
-			b.conn = nil
+			b.controllerConn = nil
 		} else {
-			b.conn = cc
+			b.controllerConn = cc
+		}
+
+		cc, err = grpc.Dial(b.adapterConfig.Monitor, options...)
+		if err != nil {
+			b.monitorConn = nil
+		} else {
+			b.monitorConn = cc
 		}
 	}
 }
@@ -426,12 +438,12 @@ func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handl
 	b.guard.Lock()
 	defer b.guard.Unlock()
 
-	if b.conn == nil {
+	if b.controllerConn == nil || b.monitorConn == nil {
 		return nil, errors.New("invalid client connection")
 	}
 
 	return &handler{
-		controller: access.NewControllerClient(b.conn),
-		monitor:    access.NewMonitorClient(b.conn),
+		controller: access.NewControllerClient(b.controllerConn),
+		monitor:    access.NewMonitorClient(b.monitorConn),
 	}, nil
 }

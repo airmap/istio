@@ -393,6 +393,10 @@ func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 		_ = b.controllerConn.Close()
 	}
 
+	if b.monitorConn != nil {
+		_ = b.monitorConn.Close()
+	}
+
 	if b.adapterConfig = cfg.(*config.Params); b.adapterConfig != nil {
 		options := []grpc.DialOption{
 			grpc.WithInsecure(),

@@ -365,15 +365,17 @@ func GetInfo() adapter.Info {
 		},
 		DefaultConfig: defaultParam(),
 		NewBuilder: func() adapter.HandlerBuilder {
-			balancer := grpc.Balancer(nil)
+			controllberBalancer, monitorBalancer := grpc.Balancer(nil), grpc.Balancer(nil)
 			resolver, err := naming.NewDNSResolverWithFreq(30 * time.Second)
 			if err != nil {
 				log.Error("failed to instantiate naming resolver", zap.Error(err))
 			} else {
-				balancer = grpc.RoundRobin(resolver)
+				controllberBalancer = grpc.RoundRobin(resolver)
+				monitorBalancer = grpc.RoundRobin(resolver)
 			}
 			return &builder{
-				balancer: balancer,
+				controllerBalancer: controllberBalancer,
+				monitorBalancer:    monitorBalancer,
 			}
 		},
 	}
@@ -383,11 +385,12 @@ var _ authorization.HandlerBuilder = &builder{}
 var _ logentry.HandlerBuilder = &builder{}
 
 type builder struct {
-	adapterConfig  *config.Params
-	balancer       grpc.Balancer
-	controllerConn *grpc.ClientConn
-	monitorConn    *grpc.ClientConn
-	guard          sync.Mutex
+	adapterConfig      *config.Params
+	controllerBalancer grpc.Balancer
+	controllerConn     *grpc.ClientConn
+	monitorBalancer    grpc.Balancer
+	monitorConn        *grpc.ClientConn
+	guard              sync.Mutex
 }
 
 func (*builder) SetAuthorizationTypes(map[string]*authorization.Type) {}
@@ -406,22 +409,32 @@ func (b *builder) SetAdapterConfig(cfg adapter.Config) {
 	}
 
 	if b.adapterConfig = cfg.(*config.Params); b.adapterConfig != nil {
-		options := []grpc.DialOption{
+		controllerOptions := []grpc.DialOption{
 			grpc.WithInsecure(),
+			grpc.WithBlock(),
 		}
 
-		if b.balancer != nil {
-			options = append(options, grpc.WithBalancer(b.balancer))
+		if b.controllerBalancer != nil {
+			controllerOptions = append(controllerOptions, grpc.WithBalancer(b.controllerBalancer))
 		}
 
-		cc, err := grpc.Dial(b.adapterConfig.Controller, options...)
+		cc, err := grpc.Dial(b.adapterConfig.Controller, controllerOptions...)
 		if err != nil {
 			b.controllerConn = nil
 		} else {
 			b.controllerConn = cc
 		}
 
-		cc, err = grpc.Dial(b.adapterConfig.Monitor, options...)
+		monitorOptions := []grpc.DialOption{
+			grpc.WithInsecure(),
+			grpc.WithBlock(),
+		}
+
+		if b.monitorBalancer != nil {
+			monitorOptions = append(monitorOptions, grpc.WithBalancer(b.monitorBalancer))
+		}
+
+		cc, err = grpc.Dial(b.adapterConfig.Monitor, monitorOptions...)
 		if err != nil {
 			b.monitorConn = nil
 		} else {

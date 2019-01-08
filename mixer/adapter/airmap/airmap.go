@@ -13,7 +13,6 @@ import (
 	"net"
 	"net/url"
 	"path"
-	"sync"
 	"time"
 
 	"istio.io/istio/mixer/pkg/status"
@@ -21,11 +20,8 @@ import (
 	"go.uber.org/zap"
 	"istio.io/istio/pkg/log"
 
-	"google.golang.org/grpc/naming"
-
 	"github.com/gogo/googleapis/google/rpc"
 	"github.com/gogo/protobuf/types"
-	"google.golang.org/grpc"
 	"istio.io/istio/mixer/adapter/airmap/access"
 	"istio.io/istio/mixer/adapter/airmap/config"
 	"istio.io/istio/mixer/pkg/adapter"
@@ -34,34 +30,11 @@ import (
 )
 
 const (
-	keyAPIKey            = "api-key"
-	keyVersion           = "version"
-	defaultValidCount    = 1
-	defaultValidDuration = 5 * time.Second
+	keyAPIKey  = "api-key"
+	keyVersion = "version"
 )
 
 var (
-	defaultValues struct {
-		subject struct {
-			ip        *access.Source_IP
-			key       *access.API_Key
-			userAgent *access.Source_UserAgent
-		}
-
-		action struct {
-			namespace *access.API_Namespace
-			name      *access.API_Name
-			version   *access.API_Version
-			method    *access.API_Method
-			resource  *access.API_Resource
-		}
-
-		response struct {
-			code    *access.Log_Response_Code
-			message *access.Log_Response_Message
-		}
-	}
-
 	statusCodeLut = map[access.Code]rpc.Code{
 		access.CodeOK:            rpc.OK,
 		access.CodeForbidden:     rpc.PERMISSION_DENIED,
@@ -71,40 +44,6 @@ var (
 
 	errFailedClosingStream = errors.New("failed to close log access stream")
 )
-
-func init() {
-	defaultValues.subject.ip = &access.Source_IP{
-		AsBytes: []byte{255, 255, 255, 255},
-	}
-	defaultValues.subject.key = &access.API_Key{
-		AsString: "unknown",
-	}
-	defaultValues.subject.userAgent = &access.Source_UserAgent{
-		AsString: "unknown",
-	}
-	defaultValues.action.namespace = &access.API_Namespace{
-		AsString: "unknown",
-	}
-	defaultValues.action.name = &access.API_Name{
-		AsString: "unknown",
-	}
-	defaultValues.action.version = &access.API_Version{
-		AsString: "unknown",
-	}
-	defaultValues.action.method = &access.API_Method{
-		AsString: "unknown",
-	}
-	defaultValues.action.resource = &access.API_Resource{
-		AsString: "unknown",
-	}
-
-	defaultValues.response.code = &access.Log_Response_Code{
-		AsInt64: -1,
-	}
-	defaultValues.response.message = &access.Log_Response_Message{
-		AsString: "unknown",
-	}
-}
 
 type handler struct {
 	controller access.ControllerClient
@@ -199,8 +138,8 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 	}
 
 	var (
-		duration       = defaultValidDuration
-		count    int32 = defaultValidCount
+		duration = defaultValidDuration
+		count    = defaultValidCount
 	)
 
 	if result.Validity != nil {
@@ -351,112 +290,4 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 
 func (h *handler) Close() error {
 	return nil
-}
-
-// GetInfo returns the Info associated with this adapter implementation.
-func GetInfo() adapter.Info {
-	return adapter.Info{
-		Name:        "airmap",
-		Impl:        "istio.io/istio/mixer/adapter/airmap",
-		Description: "Dispatches to an in-cluster adapter via ReST",
-		SupportedTemplates: []string{
-			authorization.TemplateName,
-			logentry.TemplateName,
-		},
-		DefaultConfig: defaultParam(),
-		NewBuilder: func() adapter.HandlerBuilder {
-			controllberBalancer, monitorBalancer := grpc.Balancer(nil), grpc.Balancer(nil)
-			resolver, err := naming.NewDNSResolverWithFreq(30 * time.Second)
-			if err != nil {
-				log.Error("failed to instantiate naming resolver", zap.Error(err))
-			} else {
-				controllberBalancer = grpc.RoundRobin(resolver)
-				monitorBalancer = grpc.RoundRobin(resolver)
-			}
-			return &builder{
-				controllerBalancer: controllberBalancer,
-				monitorBalancer:    monitorBalancer,
-			}
-		},
-	}
-}
-
-var _ authorization.HandlerBuilder = &builder{}
-var _ logentry.HandlerBuilder = &builder{}
-
-type builder struct {
-	adapterConfig      *config.Params
-	controllerBalancer grpc.Balancer
-	controllerConn     *grpc.ClientConn
-	monitorBalancer    grpc.Balancer
-	monitorConn        *grpc.ClientConn
-	guard              sync.Mutex
-}
-
-func (*builder) SetAuthorizationTypes(map[string]*authorization.Type) {}
-func (*builder) SetLogEntryTypes(map[string]*logentry.Type)           {}
-
-func (b *builder) SetAdapterConfig(cfg adapter.Config) {
-	b.guard.Lock()
-	defer b.guard.Unlock()
-
-	if b.controllerConn != nil {
-		_ = b.controllerConn.Close()
-	}
-
-	if b.monitorConn != nil {
-		_ = b.monitorConn.Close()
-	}
-
-	if b.adapterConfig = cfg.(*config.Params); b.adapterConfig != nil {
-		controllerOptions := []grpc.DialOption{
-			grpc.WithInsecure(),
-			grpc.WithBlock(),
-		}
-
-		if b.controllerBalancer != nil {
-			controllerOptions = append(controllerOptions, grpc.WithBalancer(b.controllerBalancer))
-		}
-
-		cc, err := grpc.Dial(b.adapterConfig.Controller, controllerOptions...)
-		if err != nil {
-			b.controllerConn = nil
-		} else {
-			b.controllerConn = cc
-		}
-
-		monitorOptions := []grpc.DialOption{
-			grpc.WithInsecure(),
-			grpc.WithBlock(),
-		}
-
-		if b.monitorBalancer != nil {
-			monitorOptions = append(monitorOptions, grpc.WithBalancer(b.monitorBalancer))
-		}
-
-		cc, err = grpc.Dial(b.adapterConfig.Monitor, monitorOptions...)
-		if err != nil {
-			b.monitorConn = nil
-		} else {
-			b.monitorConn = cc
-		}
-	}
-}
-
-func (*builder) Validate() (ce *adapter.ConfigErrors) {
-	return
-}
-
-func (b *builder) Build(context context.Context, env adapter.Env) (adapter.Handler, error) {
-	b.guard.Lock()
-	defer b.guard.Unlock()
-
-	if b.controllerConn == nil || b.monitorConn == nil {
-		return nil, errors.New("invalid client connection")
-	}
-
-	return &handler{
-		controller: access.NewControllerClient(b.controllerConn),
-		monitor:    access.NewMonitorClient(b.monitorConn),
-	}, nil
 }

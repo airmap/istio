@@ -82,7 +82,7 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 		Timestamp: types.TimestampNow(),
 	}
 
-	if auth, ok := instance.Subject.Properties["Authorization"].(string); ok {
+	if auth, ok := instance.Subject.Properties["authorization"].(string); ok {
 		params.Raw = &access.Raw{
 			Authorization: &access.Raw_Authorization{
 				AsString: auth,

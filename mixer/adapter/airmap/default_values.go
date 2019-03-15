@@ -10,6 +10,10 @@ var (
 	defaultValidCount    int32 = 1
 	defaultValidDuration       = 5 * time.Second
 	defaultValues        struct {
+		requestID struct {
+			id *access.Log_Request_RequestId
+		}
+
 		subject struct {
 			ip        *access.Source_IP
 			key       *access.API_Key
@@ -32,6 +36,9 @@ var (
 )
 
 func init() {
+	defaultValues.requestID.id = &access.Log_Request_RequestId{
+		AsString: "",
+	}
 	defaultValues.subject.ip = &access.Source_IP{
 		AsBytes: []byte{255, 255, 255, 255},
 	}

@@ -200,7 +200,7 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 
 		if v, ok := instance.Variables["requestId"]; ok {
 			if id, ok := v.(string); ok {
-				l.Id.AsString = id
+				l.Request.Id.AsString = id
 			}
 		}
 

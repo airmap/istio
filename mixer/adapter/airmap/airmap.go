@@ -178,6 +178,7 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 
 		l := access.Log{
 			Request: &access.Log_Request{
+				Id: defaultValues.requestID.id,
 				Subject: &access.Log_Request_Subject{
 					Ip:        defaultValues.subject.ip,
 					Key:       defaultValues.subject.key,
@@ -196,6 +197,12 @@ func (h *handler) HandleLogEntry(ctxt context.Context, instances []*logentry.Ins
 				Message: defaultValues.response.message,
 			},
 			Timestamp: ts,
+		}
+
+		if v, ok := instance.Variables["requestId"]; ok {
+			if id, ok := v.(string); ok {
+				l.Request.Id.AsString = id
+			}
 		}
 
 		if v, ok := instance.Variables["xForwardedFor"]; ok {

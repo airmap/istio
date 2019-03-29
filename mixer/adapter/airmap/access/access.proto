@@ -138,8 +138,15 @@ message Log {
       API.Method method       = 4;  // The concrete access method.
       API.Resource resource   = 5;  // The specific resource that is accessed within the API.
     }
-    Subject subject = 1;  // The subject of the request.
-    Action action   = 2;  // The requested action.
+
+    // RequestId models the unique id of a web request.
+    message RequestId {
+      string as_string = 1;
+    }
+
+    RequestId id    = 1;  // The ID of the request
+    Subject subject = 2;  // The subject of the request.
+    Action action   = 3;  // The requested action.
   }
 
   // Response summarizes a response to an individual request.

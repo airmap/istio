@@ -2,7 +2,7 @@
 title: access
 layout: protoc-gen-docs
 generator: protoc-gen-docs
-number_of_entries: 37
+number_of_entries: 38
 ---
 <h2 id="Services">Services</h2>
 <h3 id="Controller">Controller</h3>
@@ -584,6 +584,14 @@ number_of_entries: 37
 </tr>
 </thead>
 <tbody>
+<tr id="Log-Request-id">
+<td><code>id</code></td>
+<td><code><a href="#Log-Request-RequestId">Log.Request.RequestId</a></code></td>
+<td>
+<p>The ID of the request</p>
+
+</td>
+</tr>
 <tr id="Log-Request-subject">
 <td><code>subject</code></td>
 <td><code><a href="#Log-Request-Subject">Log.Request.Subject</a></code></td>
@@ -654,6 +662,28 @@ number_of_entries: 37
 <td>
 <p>The specific resource that is accessed within the API.</p>
 
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<h3 id="Log-Request-RequestId">Log.Request.RequestId</h3>
+<section>
+<p>RequestId models the unique id of a web request.</p>
+
+<table class="message-fields">
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr id="Log-Request-RequestId-as_string">
+<td><code>asString</code></td>
+<td><code>string</code></td>
+<td>
 </td>
 </tr>
 </tbody>

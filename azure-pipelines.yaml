@@ -7,6 +7,7 @@ trigger:
   branches:
     include:
       - "airmap/release-1.1.0.snapshot.1"
+      - "airmap/1.1.1-adapter"
 jobs:
   - job: "pr"
     strategy:
@@ -21,7 +22,7 @@ jobs:
         persistCredentials: true
       - bash: |
           set -exo pipefail
-          if [[ "${BUILD_SOURCEBRANCHNAME}" != "release-1.1.0.snapshot.1" ]]; then
+          if [[ "${BUILD_SOURCEBRANCHNAME}" != "release-1.1.0.snapshot.1"] && ["${BUILD_SOURCEBRANCHNAME}" != "1.1.1-adapter" ]]; then
             export GOPATH=/tmp/go
             export PATH=${GOPATH}/bin:${PATH}
             mkdir -p ${GOPATH}/src/istio.io/istio
@@ -44,7 +45,7 @@ jobs:
         persistCredentials: true
       - bash: |
           set -exo pipefail
-          if [[ "${BUILD_SOURCEBRANCHNAME}" == "release-1.1.0.snapshot.1" ]]; then
+          if [[ "${BUILD_SOURCEBRANCHNAME}" == "release-1.1.0.snapshot.1"] || ["${BUILD_SOURCEBRANCHNAME}" == "1.1.1-adapter" ]]; then
             docker login $REGISTRY -u $ACR_USERNAME -p $ACR_PASSWORD
             export GOPATH=/tmp/go
             export PATH=${GOPATH}/bin:${PATH}

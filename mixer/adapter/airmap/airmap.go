@@ -125,6 +125,13 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 		}
 	}
 
+	if v, ok := instance.Subject.Properties["requestId"]; ok {
+		if id, ok := v.(string); ok {
+			params.Action.RequestId = &access.Log_Request_RequestId{
+				AsString: id,
+			}
+	}
+
 	// 2 seconds is a random choice at this point in time. We obviously want to achieve way lower latency.
 	// However, we need to make sure that we are not stalling incoming requests. In particular, as we are
 	// potentially operating in the context of an ingress gateway.

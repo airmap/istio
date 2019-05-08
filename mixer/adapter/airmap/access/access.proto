@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
-package access;
+package access; // access
 
 // Code enumerates all known result codes.
 enum Code {
@@ -54,17 +54,17 @@ message Raw {
 message Credentials {
   // Username models a username.
   message Username {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   // Group models a group.
   message Group {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   // Password models a password.
   message Password {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   Username username     = 1;  // The name of the user.
@@ -76,32 +76,32 @@ message Credentials {
 message API {
   // Namespace models the namespace that an API lives in.
   message Namespace {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   // Name models the name of an API.
   message Name {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   // Version models the version of an API.
   message Version {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   // Resource models a specific resource of an API.
   message Resource {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   // Method models an access method on an API.
   message Method {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 
   // Key models an API key passed on with a request to an API.
   message Key {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 }
 
@@ -109,12 +109,12 @@ message API {
 message Source {
   // IP describes the ip of the source of a request.
   message IP {
-    bytes as_bytes = 1;
+    bytes as_bytes = 1;   // Its byte value
   }
 
   // UserAgent describes a user agent.
   message UserAgent {
-    string as_string = 1;
+    string as_string = 1;   // Its string value
   }
 }
 
@@ -141,7 +141,7 @@ message Log {
 
     // RequestId models the unique id of a web request.
     message RequestId {
-      string as_string = 1;
+      string as_string = 1;   // Its string value
     }
 
     RequestId id    = 1;  // The ID of the request
@@ -194,11 +194,12 @@ message AuthorizeAccessParameters {
 
   // Action describes what a subject is trying to access.
   message Action {
-    API.Namespace namespace = 1;  // The namespace that the API lives in.
-    API.Name name           = 2;  // The name of the API that is accessed.
-    API.Version version     = 3;  // The version of the API that is accessed.
-    API.Method method       = 4;  // The concrete access method.
-    API.Resource resource   = 5;  // The specific resource that is accessed within the API.
+    API.Namespace namespace          = 1;  // The namespace that the API lives in.
+    API.Name name                    = 2;  // The name of the API that is accessed.
+    API.Version version              = 3;  // The version of the API that is accessed.
+    API.Method method                = 4;  // The concrete access method.
+    API.Resource resource            = 5;  // The specific resource that is accessed within the API.
+    Log.Request.RequestId request_id = 6;  // The unique ID of the request
   }
 
   Subject subject                     = 1;  // Who tried to access the API.

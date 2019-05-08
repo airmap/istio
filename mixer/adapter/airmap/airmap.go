@@ -130,6 +130,7 @@ func (h *handler) HandleAuthorization(ctxt context.Context, instance *authorizat
 			params.Action.RequestId = &access.Log_Request_RequestId{
 				AsString: id,
 			}
+		}
 	}
 
 	// 2 seconds is a random choice at this point in time. We obviously want to achieve way lower latency.

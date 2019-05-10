@@ -55,6 +55,9 @@ var (
 	// istio/config/v1alpha2/httpapispecs metadata
 	IstioConfigV1alpha2Httpapispecs resource.Info
 
+	// istio/config/v1alpha2/legacy/airmaps metadata
+	IstioConfigV1alpha2LegacyAirmaps resource.Info
+
 	// istio/config/v1alpha2/legacy/apikeys metadata
 	IstioConfigV1alpha2LegacyApikeys resource.Info
 
@@ -145,7 +148,7 @@ var (
 	// istio/config/v1alpha2/legacy/tracespans metadata
 	IstioConfigV1alpha2LegacyTracespans resource.Info
 
-	// istio/config/v1alpha2/legacy/tracespans metadata
+	// istio/config/v1alpha2/legacy/zipkins metadata
 	IstioConfigV1alpha2LegacyZipkins resource.Info
 
 	// istio/config/v1alpha2/templates metadata
@@ -233,6 +236,9 @@ func init() {
 	IstioConfigV1alpha2Httpapispecs = b.Register(
 		"istio/config/v1alpha2/httpapispecs",
 		"type.googleapis.com/istio.mixer.v1.config.client.HTTPAPISpec")
+	IstioConfigV1alpha2LegacyAirmaps = b.Register(
+		"istio/config/v1alpha2/legacy/airmaps",
+		"type.googleapis.com/type.googleapis.com/google.protobuf.Struct")
 	IstioConfigV1alpha2LegacyApikeys = b.Register(
 		"istio/config/v1alpha2/legacy/apikeys",
 		"type.googleapis.com/type.googleapis.com/google.protobuf.Struct")

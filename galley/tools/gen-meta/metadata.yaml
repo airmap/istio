@@ -234,6 +234,14 @@ resources:
     collection:  "istio/config/v1alpha2/adapters"
 
 ## Mixer Adapter Types
+  - kind:        "airmap"
+    singular:    "airmap"
+    plural:      "airmaps"
+    group:       "config.istio.io"
+    version:     "v1alpha2"
+    proto:       "type.googleapis.com/google.protobuf.Struct"
+    protoPackage: "github.com/gogo/protobuf/types"
+    collection:  "istio/config/v1alpha2/legacy/airmaps"
 
   - kind:        "bypass"
     singular:    "bypass"

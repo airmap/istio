@@ -54,6 +54,7 @@ jobs:
             make build
             make push.docker.mixer HUB=${REGISTRY}/istio TAG=$(git rev-parse --short HEAD)
             make push.docker.pilot HUB=${REGISTRY}/istio TAG=$(git rev-parse --short HEAD)
+            make push.docker.galley HUB=${REGISTRY}/istio TAG=$(git rev-parse --short HEAD)
           fi
         name: "build_image"
         displayName: "Build image"

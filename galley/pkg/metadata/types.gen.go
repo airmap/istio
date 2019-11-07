@@ -1,3 +1,4 @@
+
 // GENERATED FILE -- DO NOT EDIT
 //
 //go:generate $GOPATH/src/istio.io/istio/galley/tools/gen-meta/gen-meta.sh runtime pkg/metadata/types.gen.go
@@ -7,6 +8,7 @@ package metadata
 
 import (
 	// Pull in all the known proto types to ensure we get their types registered.
+
 
 	// Register protos in "github.com/gogo/protobuf/types"
 	_ "github.com/gogo/protobuf/types"
@@ -32,6 +34,7 @@ import (
 	// Register protos in "k8s.io/api/extensions/v1beta1"
 	_ "k8s.io/api/extensions/v1beta1"
 
+
 	"istio.io/istio/galley/pkg/runtime/resource"
 )
 
@@ -39,186 +42,190 @@ import (
 var Types *resource.Schema
 
 var (
-
-	// istio/authentication/v1alpha1/meshpolicies metadata
-	IstioAuthenticationV1alpha1Meshpolicies resource.Info
-
-	// istio/authentication/v1alpha1/policies metadata
-	IstioAuthenticationV1alpha1Policies resource.Info
-
-	// istio/config/v1alpha2/adapters metadata
-	IstioConfigV1alpha2Adapters resource.Info
-
-	// istio/config/v1alpha2/httpapispecbindings metadata
-	IstioConfigV1alpha2Httpapispecbindings resource.Info
-
-	// istio/config/v1alpha2/httpapispecs metadata
-	IstioConfigV1alpha2Httpapispecs resource.Info
-
-	// istio/config/v1alpha2/legacy/apikeys metadata
-	IstioConfigV1alpha2LegacyApikeys resource.Info
-
-	// istio/config/v1alpha2/legacy/authorizations metadata
-	IstioConfigV1alpha2LegacyAuthorizations resource.Info
-
-	// istio/config/v1alpha2/legacy/bypasses metadata
-	IstioConfigV1alpha2LegacyBypasses resource.Info
-
-	// istio/config/v1alpha2/legacy/checknothings metadata
-	IstioConfigV1alpha2LegacyChecknothings resource.Info
-
-	// istio/config/v1alpha2/legacy/circonuses metadata
-	IstioConfigV1alpha2LegacyCirconuses resource.Info
-
-	// istio/config/v1alpha2/legacy/cloudwatches metadata
-	IstioConfigV1alpha2LegacyCloudwatches resource.Info
-
-	// istio/config/v1alpha2/legacy/deniers metadata
-	IstioConfigV1alpha2LegacyDeniers resource.Info
-
-	// istio/config/v1alpha2/legacy/dogstatsds metadata
-	IstioConfigV1alpha2LegacyDogstatsds resource.Info
-
-	// istio/config/v1alpha2/legacy/edges metadata
-	IstioConfigV1alpha2LegacyEdges resource.Info
-
-	// istio/config/v1alpha2/legacy/fluentds metadata
-	IstioConfigV1alpha2LegacyFluentds resource.Info
-
-	// istio/config/v1alpha2/legacy/kubernetesenvs metadata
-	IstioConfigV1alpha2LegacyKubernetesenvs resource.Info
-
-	// istio/config/v1alpha2/legacy/kuberneteses metadata
-	IstioConfigV1alpha2LegacyKuberneteses resource.Info
-
-	// istio/config/v1alpha2/legacy/listcheckers metadata
-	IstioConfigV1alpha2LegacyListcheckers resource.Info
-
-	// istio/config/v1alpha2/legacy/listentries metadata
-	IstioConfigV1alpha2LegacyListentries resource.Info
-
-	// istio/config/v1alpha2/legacy/logentries metadata
-	IstioConfigV1alpha2LegacyLogentries resource.Info
-
-	// istio/config/v1alpha2/legacy/memquotas metadata
-	IstioConfigV1alpha2LegacyMemquotas resource.Info
-
-	// istio/config/v1alpha2/legacy/metrics metadata
-	IstioConfigV1alpha2LegacyMetrics resource.Info
-
-	// istio/config/v1alpha2/legacy/noops metadata
-	IstioConfigV1alpha2LegacyNoops resource.Info
-
-	// istio/config/v1alpha2/legacy/opas metadata
-	IstioConfigV1alpha2LegacyOpas resource.Info
-
-	// istio/config/v1alpha2/legacy/prometheuses metadata
-	IstioConfigV1alpha2LegacyPrometheuses resource.Info
-
-	// istio/config/v1alpha2/legacy/quotas metadata
-	IstioConfigV1alpha2LegacyQuotas resource.Info
-
-	// istio/config/v1alpha2/legacy/rbacs metadata
-	IstioConfigV1alpha2LegacyRbacs resource.Info
-
-	// istio/config/v1alpha2/legacy/redisquotas metadata
-	IstioConfigV1alpha2LegacyRedisquotas resource.Info
-
-	// istio/config/v1alpha2/legacy/reportnothings metadata
-	IstioConfigV1alpha2LegacyReportnothings resource.Info
-
-	// istio/config/v1alpha2/legacy/signalfxs metadata
-	IstioConfigV1alpha2LegacySignalfxs resource.Info
-
-	// istio/config/v1alpha2/legacy/solarwindses metadata
-	IstioConfigV1alpha2LegacySolarwindses resource.Info
-
-	// istio/config/v1alpha2/legacy/stackdrivers metadata
-	IstioConfigV1alpha2LegacyStackdrivers resource.Info
-
-	// istio/config/v1alpha2/legacy/statsds metadata
-	IstioConfigV1alpha2LegacyStatsds resource.Info
-
-	// istio/config/v1alpha2/legacy/stdios metadata
-	IstioConfigV1alpha2LegacyStdios resource.Info
-
-	// istio/config/v1alpha2/legacy/tracespans metadata
-	IstioConfigV1alpha2LegacyTracespans resource.Info
-
-	// istio/config/v1alpha2/legacy/zipkins metadata
-	IstioConfigV1alpha2LegacyZipkins resource.Info
-
-	// istio/config/v1alpha2/templates metadata
-	IstioConfigV1alpha2Templates resource.Info
-
-	// istio/mixer/v1/config/client/quotaspecbindings metadata
-	IstioMixerV1ConfigClientQuotaspecbindings resource.Info
-
-	// istio/mixer/v1/config/client/quotaspecs metadata
-	IstioMixerV1ConfigClientQuotaspecs resource.Info
-
-	// istio/networking/v1alpha3/destinationrules metadata
-	IstioNetworkingV1alpha3Destinationrules resource.Info
-
-	// istio/networking/v1alpha3/envoyfilters metadata
-	IstioNetworkingV1alpha3Envoyfilters resource.Info
-
-	// istio/networking/v1alpha3/gateways metadata
-	IstioNetworkingV1alpha3Gateways resource.Info
-
-	// istio/networking/v1alpha3/serviceentries metadata
-	IstioNetworkingV1alpha3Serviceentries resource.Info
-
-	// istio/networking/v1alpha3/sidecars metadata
-	IstioNetworkingV1alpha3Sidecars resource.Info
-
-	// istio/networking/v1alpha3/synthetic/serviceentries metadata
-	IstioNetworkingV1alpha3SyntheticServiceentries resource.Info
-
-	// istio/networking/v1alpha3/virtualservices metadata
-	IstioNetworkingV1alpha3Virtualservices resource.Info
-
-	// istio/policy/v1beta1/attributemanifests metadata
-	IstioPolicyV1beta1Attributemanifests resource.Info
-
-	// istio/policy/v1beta1/handlers metadata
-	IstioPolicyV1beta1Handlers resource.Info
-
-	// istio/policy/v1beta1/instances metadata
-	IstioPolicyV1beta1Instances resource.Info
-
-	// istio/policy/v1beta1/rules metadata
-	IstioPolicyV1beta1Rules resource.Info
-
-	// istio/rbac/v1alpha1/clusterrbacconfigs metadata
-	IstioRbacV1alpha1Clusterrbacconfigs resource.Info
-
-	// istio/rbac/v1alpha1/rbacconfigs metadata
-	IstioRbacV1alpha1Rbacconfigs resource.Info
-
-	// istio/rbac/v1alpha1/servicerolebindings metadata
-	IstioRbacV1alpha1Servicerolebindings resource.Info
-
-	// istio/rbac/v1alpha1/serviceroles metadata
-	IstioRbacV1alpha1Serviceroles resource.Info
-
-	// k8s/core/v1/endpoints metadata
-	K8sCoreV1Endpoints resource.Info
-
-	// k8s/core/v1/namespaces metadata
-	K8sCoreV1Namespaces resource.Info
-
-	// k8s/core/v1/nodes metadata
-	K8sCoreV1Nodes resource.Info
-
-	// k8s/core/v1/pods metadata
-	K8sCoreV1Pods resource.Info
-
-	// k8s/core/v1/services metadata
-	K8sCoreV1Services resource.Info
-
-	// k8s/extensions/v1beta1/ingresses metadata
-	K8sExtensionsV1beta1Ingresses resource.Info
+	
+		// istio/authentication/v1alpha1/meshpolicies metadata
+		IstioAuthenticationV1alpha1Meshpolicies resource.Info
+	
+		// istio/authentication/v1alpha1/policies metadata
+		IstioAuthenticationV1alpha1Policies resource.Info
+	
+		// istio/config/v1alpha2/adapters metadata
+		IstioConfigV1alpha2Adapters resource.Info
+	
+		// istio/config/v1alpha2/httpapispecbindings metadata
+		IstioConfigV1alpha2Httpapispecbindings resource.Info
+	
+		// istio/config/v1alpha2/httpapispecs metadata
+		IstioConfigV1alpha2Httpapispecs resource.Info
+	
+		// istio/config/v1alpha2/legacy/airmaps metadata
+		IstioConfigV1alpha2LegacyAirmaps resource.Info
+	
+		// istio/config/v1alpha2/legacy/apikeys metadata
+		IstioConfigV1alpha2LegacyApikeys resource.Info
+	
+		// istio/config/v1alpha2/legacy/authorizations metadata
+		IstioConfigV1alpha2LegacyAuthorizations resource.Info
+	
+		// istio/config/v1alpha2/legacy/bypasses metadata
+		IstioConfigV1alpha2LegacyBypasses resource.Info
+	
+		// istio/config/v1alpha2/legacy/checknothings metadata
+		IstioConfigV1alpha2LegacyChecknothings resource.Info
+	
+		// istio/config/v1alpha2/legacy/circonuses metadata
+		IstioConfigV1alpha2LegacyCirconuses resource.Info
+	
+		// istio/config/v1alpha2/legacy/cloudwatches metadata
+		IstioConfigV1alpha2LegacyCloudwatches resource.Info
+	
+		// istio/config/v1alpha2/legacy/deniers metadata
+		IstioConfigV1alpha2LegacyDeniers resource.Info
+	
+		// istio/config/v1alpha2/legacy/dogstatsds metadata
+		IstioConfigV1alpha2LegacyDogstatsds resource.Info
+	
+		// istio/config/v1alpha2/legacy/edges metadata
+		IstioConfigV1alpha2LegacyEdges resource.Info
+	
+		// istio/config/v1alpha2/legacy/fluentds metadata
+		IstioConfigV1alpha2LegacyFluentds resource.Info
+	
+		// istio/config/v1alpha2/legacy/kubernetesenvs metadata
+		IstioConfigV1alpha2LegacyKubernetesenvs resource.Info
+	
+		// istio/config/v1alpha2/legacy/kuberneteses metadata
+		IstioConfigV1alpha2LegacyKuberneteses resource.Info
+	
+		// istio/config/v1alpha2/legacy/listcheckers metadata
+		IstioConfigV1alpha2LegacyListcheckers resource.Info
+	
+		// istio/config/v1alpha2/legacy/listentries metadata
+		IstioConfigV1alpha2LegacyListentries resource.Info
+	
+		// istio/config/v1alpha2/legacy/logentries metadata
+		IstioConfigV1alpha2LegacyLogentries resource.Info
+	
+		// istio/config/v1alpha2/legacy/memquotas metadata
+		IstioConfigV1alpha2LegacyMemquotas resource.Info
+	
+		// istio/config/v1alpha2/legacy/metrics metadata
+		IstioConfigV1alpha2LegacyMetrics resource.Info
+	
+		// istio/config/v1alpha2/legacy/noops metadata
+		IstioConfigV1alpha2LegacyNoops resource.Info
+	
+		// istio/config/v1alpha2/legacy/opas metadata
+		IstioConfigV1alpha2LegacyOpas resource.Info
+	
+		// istio/config/v1alpha2/legacy/prometheuses metadata
+		IstioConfigV1alpha2LegacyPrometheuses resource.Info
+	
+		// istio/config/v1alpha2/legacy/quotas metadata
+		IstioConfigV1alpha2LegacyQuotas resource.Info
+	
+		// istio/config/v1alpha2/legacy/rbacs metadata
+		IstioConfigV1alpha2LegacyRbacs resource.Info
+	
+		// istio/config/v1alpha2/legacy/redisquotas metadata
+		IstioConfigV1alpha2LegacyRedisquotas resource.Info
+	
+		// istio/config/v1alpha2/legacy/reportnothings metadata
+		IstioConfigV1alpha2LegacyReportnothings resource.Info
+	
+		// istio/config/v1alpha2/legacy/signalfxs metadata
+		IstioConfigV1alpha2LegacySignalfxs resource.Info
+	
+		// istio/config/v1alpha2/legacy/solarwindses metadata
+		IstioConfigV1alpha2LegacySolarwindses resource.Info
+	
+		// istio/config/v1alpha2/legacy/stackdrivers metadata
+		IstioConfigV1alpha2LegacyStackdrivers resource.Info
+	
+		// istio/config/v1alpha2/legacy/statsds metadata
+		IstioConfigV1alpha2LegacyStatsds resource.Info
+	
+		// istio/config/v1alpha2/legacy/stdios metadata
+		IstioConfigV1alpha2LegacyStdios resource.Info
+	
+		// istio/config/v1alpha2/legacy/tracespans metadata
+		IstioConfigV1alpha2LegacyTracespans resource.Info
+	
+		// istio/config/v1alpha2/legacy/zipkins metadata
+		IstioConfigV1alpha2LegacyZipkins resource.Info
+	
+		// istio/config/v1alpha2/templates metadata
+		IstioConfigV1alpha2Templates resource.Info
+	
+		// istio/mixer/v1/config/client/quotaspecbindings metadata
+		IstioMixerV1ConfigClientQuotaspecbindings resource.Info
+	
+		// istio/mixer/v1/config/client/quotaspecs metadata
+		IstioMixerV1ConfigClientQuotaspecs resource.Info
+	
+		// istio/networking/v1alpha3/destinationrules metadata
+		IstioNetworkingV1alpha3Destinationrules resource.Info
+	
+		// istio/networking/v1alpha3/envoyfilters metadata
+		IstioNetworkingV1alpha3Envoyfilters resource.Info
+	
+		// istio/networking/v1alpha3/gateways metadata
+		IstioNetworkingV1alpha3Gateways resource.Info
+	
+		// istio/networking/v1alpha3/serviceentries metadata
+		IstioNetworkingV1alpha3Serviceentries resource.Info
+	
+		// istio/networking/v1alpha3/sidecars metadata
+		IstioNetworkingV1alpha3Sidecars resource.Info
+	
+		// istio/networking/v1alpha3/synthetic/serviceentries metadata
+		IstioNetworkingV1alpha3SyntheticServiceentries resource.Info
+	
+		// istio/networking/v1alpha3/virtualservices metadata
+		IstioNetworkingV1alpha3Virtualservices resource.Info
+	
+		// istio/policy/v1beta1/attributemanifests metadata
+		IstioPolicyV1beta1Attributemanifests resource.Info
+	
+		// istio/policy/v1beta1/handlers metadata
+		IstioPolicyV1beta1Handlers resource.Info
+	
+		// istio/policy/v1beta1/instances metadata
+		IstioPolicyV1beta1Instances resource.Info
+	
+		// istio/policy/v1beta1/rules metadata
+		IstioPolicyV1beta1Rules resource.Info
+	
+		// istio/rbac/v1alpha1/clusterrbacconfigs metadata
+		IstioRbacV1alpha1Clusterrbacconfigs resource.Info
+	
+		// istio/rbac/v1alpha1/rbacconfigs metadata
+		IstioRbacV1alpha1Rbacconfigs resource.Info
+	
+		// istio/rbac/v1alpha1/servicerolebindings metadata
+		IstioRbacV1alpha1Servicerolebindings resource.Info
+	
+		// istio/rbac/v1alpha1/serviceroles metadata
+		IstioRbacV1alpha1Serviceroles resource.Info
+	
+		// k8s/core/v1/endpoints metadata
+		K8sCoreV1Endpoints resource.Info
+	
+		// k8s/core/v1/namespaces metadata
+		K8sCoreV1Namespaces resource.Info
+	
+		// k8s/core/v1/nodes metadata
+		K8sCoreV1Nodes resource.Info
+	
+		// k8s/core/v1/pods metadata
+		K8sCoreV1Pods resource.Info
+	
+		// k8s/core/v1/services metadata
+		K8sCoreV1Services resource.Info
+	
+		// k8s/extensions/v1beta1/ingresses metadata
+		K8sExtensionsV1beta1Ingresses resource.Info
+	
 )
 
 func init() {
@@ -239,6 +246,9 @@ func init() {
 	IstioConfigV1alpha2Httpapispecs = b.Register(
 		"istio/config/v1alpha2/httpapispecs",
 		"type.googleapis.com/istio.mixer.v1.config.client.HTTPAPISpec")
+	IstioConfigV1alpha2LegacyAirmaps = b.Register(
+		"istio/config/v1alpha2/legacy/airmaps",
+		"type.googleapis.com/type.googleapis.com/google.protobuf.Struct")
 	IstioConfigV1alpha2LegacyApikeys = b.Register(
 		"istio/config/v1alpha2/legacy/apikeys",
 		"type.googleapis.com/type.googleapis.com/google.protobuf.Struct")
@@ -405,5 +415,5 @@ func init() {
 		"k8s/extensions/v1beta1/ingresses",
 		"type.googleapis.com/k8s.io.api.extensions.v1beta1.IngressSpec")
 
-	Types = b.Build()
+    Types = b.Build()
 }

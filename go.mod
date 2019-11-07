@@ -62,6 +62,7 @@ require (
 	github.com/go-redis/redis v6.10.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/gocql/gocql v0.0.0-20190423091413-b99afaf3b163 // indirect
+	github.com/gogo/googleapis v1.3.0
 	github.com/gogo/protobuf v1.3.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.3.2
@@ -148,7 +149,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
-	golang.org/x/tools v0.0.0-20190822000311-fc82fb2afd64
+	golang.org/x/tools v0.0.0-20191107185733-c07e1c6ef61c
 	google.golang.org/api v0.9.0
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
 	google.golang.org/grpc v1.23.0

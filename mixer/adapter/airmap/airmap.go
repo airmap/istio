@@ -18,9 +18,10 @@ import (
 	"istio.io/istio/mixer/pkg/status"
 
 	"go.uber.org/zap"
-	"istio.io/istio/pkg/log"
+	"istio.io/pkg/log"
 
-	"github.com/gogo/googleapis/google/rpc"
+	// "github.com/gogo/googleapis/google/rpc"
+	rpc "istio.io/gogo-genproto/googleapis/google/rpc"
 	"github.com/gogo/protobuf/types"
 	"istio.io/istio/mixer/adapter/airmap/access"
 	"istio.io/istio/mixer/adapter/airmap/config"

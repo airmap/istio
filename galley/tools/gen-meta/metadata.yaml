@@ -464,6 +464,17 @@ resources:
     collection:  "istio/config/v1alpha2/legacy/stdios"
     optional:    true
 
+  - kind:        "airmap"
+    singular:    "airmap"
+    plural:      "airmaps"
+    group:       "config.istio.io"
+    versions:     
+    - "v1alpha2"
+    proto:       "type.googleapis.com/google.protobuf.Struct"
+    protoPackage: "github.com/gogo/protobuf/types"
+    collection:  "istio/config/v1alpha2/legacy/airmaps"
+    optional: true
+
   - kind:        "apikey"
     singular:    "apikey"
     plural:      "apikeys"

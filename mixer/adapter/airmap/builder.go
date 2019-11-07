@@ -14,7 +14,7 @@ import (
 	"istio.io/istio/mixer/pkg/adapter"
 	"istio.io/istio/mixer/template/authorization"
 	"istio.io/istio/mixer/template/logentry"
-	"istio.io/istio/pkg/log"
+	"istio.io/pkg/log"
 )
 
 // GetInfo returns the Info associated with this adapter implementation.

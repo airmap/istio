@@ -98,6 +98,23 @@ func init() {
 	versions = append(versions, "v1alpha2")
 
 	b.Add(schema.ResourceSpec{
+		Kind:      "airmap",
+		ListKind:  "airmapList",
+		Singular:  "airmap",
+		Plural:    "airmaps",
+		Versions:  versions,
+		Group:     "config.istio.io",
+		Target:    metadata.Types.Get("istio/config/v1alpha2/legacy/airmaps"),
+		Converter: converter.Get("identity"),
+
+		Optional: true,
+	})
+
+	versions = make([]string, 0)
+
+	versions = append(versions, "v1alpha2")
+
+	b.Add(schema.ResourceSpec{
 		Kind:      "apikey",
 		ListKind:  "apikeyList",
 		Singular:  "apikey",

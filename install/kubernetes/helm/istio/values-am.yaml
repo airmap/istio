@@ -1,0 +1,27 @@
+prometheus:
+  enabled: false
+tracing:
+  enabled: true
+kiali:
+  enabled: true
+
+global:
+  proxy:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 2000m
+        memory: 1024Mi
+    concurrency: 2
+    accessLogFile: "/dev/stdout"
+    dnsRefreshRate: 300s
+  imagePullPolicy: Always
+  imagePullSecrets:
+    - regcred
+  disablePolicyChecks: false
+  defaultPodDisruptionBudget:
+    minAvailable: 1
+  outboundTrafficPolicy:
+    mode: REGISTRY_ONLY
